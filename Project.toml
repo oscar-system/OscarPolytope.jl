@@ -1,0 +1,6 @@
+authors = ["Claus Fieker <fieker@mathematik.uni-kl.de>"]
+name = "OscarPolymake"
+uuid = "94e84bd4-f2f3-11e8-21aa-89ad04f9f271"
+version = "0.1.0"
+
+[deps]
