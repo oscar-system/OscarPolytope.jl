@@ -1,4 +1,4 @@
-module OscarPolymake
+module OscarPolytope
 
 using Nemo, Polymake, Markdown, LinearAlgebra
 
