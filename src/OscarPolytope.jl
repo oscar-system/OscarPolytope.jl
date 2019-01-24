@@ -38,25 +38,29 @@ end
 
 # The following is motivated by standard conventions in linear programming.
 # ... add ref ...
-# CURRENTLY ONLY INTEGER COEFFICIENTS
+# coefficients restricted to Rational
 
 # P(A,b) = { x : A x <= b }
 @doc Markdown.doc"""
     homogenous_polyhedron(A, b) -> HomogeneousPolyhedron
 
-> The homogenous polyhedron defined by the inequalities $Ax <= b$.
+# The homogenous polyhedron defined by the inequalities $bA x >= 0$.
 """
-function homogenous_polyhedron(bA::T) where {T <: MatElem{<:RingElem}}
-  t = typeof(bA[1,1])
+function homogenous_polyhedron(bA::AbstractMatrix)
+  t = eltype(bA)
   #here BigInt, Integer, (fmpz, fmpq) -> Rational
   #     nf_elem quad real field: -> QuadraticExtension
   #     float -> Float
   #     mpfr, BigFloat -> AccurateFloat
-  #    
+  #
   p = Polymake.perlobj( "Polytope<Rational>", Dict("INEQUALITIES" => bA))
   H = HomogeneousPolyhedron(t)
   H.P = p
   return H
+end
+
+function homogenous_polyhedron(bA::T) where {T <: MatElem{<:RingElem}}
+    return homogenous_polyhedron(Matrix{BigInt}(bA))
 end
 
 @doc Markdown.doc"""
