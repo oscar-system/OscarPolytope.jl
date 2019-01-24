@@ -46,14 +46,13 @@ end
 
 > The homogenous polyhedron defined by the inequalities $Ax <= b$.
 """
-function homogenous_polyhedron(A::T, b::T) where {T <: MatElem{<:RingElem}}
-  t = typeof(A[1,1])
+function homogenous_polyhedron(bA::T) where {T <: MatElem{<:RingElem}}
+  t = typeof(bA[1,1])
   #here BigInt, Integer, (fmpz, fmpq) -> Rational
   #     nf_elem quad real field: -> QuadraticExtension
   #     float -> Float
   #     mpfr, BigFloat -> AccurateFloat
   #    
-  bA = Array{BigInt, 2}([b -A])
   p = Polymake.perlobj( "Polytope<Rational>", Dict("INEQUALITIES" => bA))
   H = HomogeneousPolyhedron(t)
   H.P = p
@@ -66,7 +65,7 @@ end
 > The (metric) polyhedron defined by the inequalities $Ax \le b$.
 """
 function polyhedron(A::T, b::T) where {T <: MatElem{<:RingElem}} 
-    return Polyhedron(homogenous_polyhedron(A, b))
+    return Polyhedron(homogenous_polyhedron([b -A]))
 end
 
 # P^*(A,c) = { y : y A = c, y >= 0 }
