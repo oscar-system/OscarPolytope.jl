@@ -29,7 +29,6 @@ function HomogenousPolyhedron(bA::AbstractMatrix)
   #     nf_elem quad real field: -> QuadraticExtension
   #     float -> Float
   #     mpfr, BigFloat -> AccurateFloat
-  #
   p = Polymake.perlobj("Polytope<Rational>", Dict("INEQUALITIES" => Rational{BigInt}.(bA)))
   return HomogenousPolyhedron(p)
 end
@@ -56,10 +55,51 @@ function Base.show(io::IO, P::Polyhedron)
     ineq = P.homogenous_polyhedron.P.INEQUALITIES
     print(io, "Polyhedron given by { x | A x ≤ b } where \n")
     print(io, "\nA = \n")
-    Base.print_array(io, ineq[:,2:end])
+    Base.print_array(io, -ineq[:,2:end])
     print(io, "\n\nb = \n")
     Base.print_array(io, ineq[:,1])
 end
+
+@doc Markdown.doc"""
+    DualPolyhedron(A, c)
+
+The (metric) polyhedron defined by
+
+$$P^*(A,c) = \{ y \, | \, yA = c, y ≥ 0 \}.$$
+"""
+struct DualPolyhedron #a real polymake polyhedron
+    homogenous_polyhedron::HomogenousPolyhedron
+end
+function DualPolyhedron(A, c)
+# t = typeof(A[1,1])
+    #here BigInt, Integer, (fmpz, fmpq) -> Rational
+    #     nf_elem quad real field: -> QuadraticExtension
+    #     float -> Float
+    #     mpfr, BigFloat -> AccurateFloat
+    #
+    m, n = size(A)
+    cA = matrix_for_polymake([c -LinearAlgebra.transpose(A)])
+    nonnegative = [zeros(BigInt, m, 1)  LinearAlgebra.I]
+    P_star = Polymake.perlobj( "Polytope<Rational>", Dict("EQUATIONS" => cA, "INEQUALITIES" => nonnegative))
+    H = HomogenousPolyhedron(P_star)
+    return DualPolyhedron(H)
+end
+
+matrix_for_polymake(x::Nemo.fmpz_mat) = Matrix{BigInt}(x)
+matrix_for_polymake(x::Nemo.fmpq_mat) = Matrix{Rational{BigInt}}(x)
+matrix_for_polymake(x::AbstractMatrix{<:Integer}) = x
+matrix_for_polymake(x::AbstractMatrix{<:Rational{<:Integer}}) = x
+
+function Base.show(io::IO, P::DualPolyhedron)
+    ineq = P.homogenous_polyhedron.P.EQUATIONS
+    print(io, "DualPolyhedron given by { y | yA = c, y ≥ 0 } where \n")
+    print(io, "\nA = \n")
+    Base.print_array(io, -transpose(ineq[:,2:end]))
+    print(io, "\n\nc = \n")
+    Base.print_array(io, ineq[:,1])
+end
+
+
 
 
 # function homogenous_polyhedron(bA::T) where {T <: MatElem{<:RingElem}}
