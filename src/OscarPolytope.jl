@@ -2,39 +2,39 @@ module OscarPolytope
 
 import LinearAlgebra, Markdown, Nemo, Polymake
 
-export Polyhedron, HomogenousPolyhedron
+export Polyhedron, DualPolyhedron, HomogenousPolyhedron
 
 # export polyhedron, dual_polyhedron, homogenous_polyhedron,
        # boundary_points_matrix, inner_points_matrix
+matrix_for_polymake(x::Nemo.fmpz_mat) = Matrix{BigInt}(x)
+matrix_for_polymake(x::Nemo.fmpq_mat) = Matrix{Rational{BigInt}}(x)
+matrix_for_polymake(x::AbstractMatrix{<:Integer}) = x
+matrix_for_polymake(x::AbstractMatrix{<:Rational{<:Integer}}) = x
 
-#to add the (common) interface... still should be renamed to nrows
-# Nemo.rows(A::Polymake.pm_MatrixAllocated) = Int(size(A)[1])
-# Nemo.cols(A::Polymake.pm_MatrixAllocated) = Int(size(A)[2])
+#here BigInt, Integer, (fmpz, fmpq) -> Rational
+#     nf_elem quad real field: -> QuadraticExtension
+#     float -> Float
+#     mpfr, BigFloat -> AccurateFloat
 
+@doc Markdown.doc"""
+    HomogenousPolyhedron(A)
 
-struct HomogenousPolyhedron #an affine or metric poly object (for me)
+The homogenous polyhedron defined by the inequalities $ A x ≥ 0$.
+"""
+struct HomogenousPolyhedron #
     P::Polymake.pm_perl_ObjectAllocated
     boundedness::Symbol # Values: :unknown, :bounded, :unbounded
 end
 function HomogenousPolyhedron(P::Polymake.pm_perl_ObjectAllocated)
     HomogenousPolyhedron(P, :unknown)
 end
-@doc Markdown.doc"""
-    HomogenousPolyhedron(A)
-
-# The homogenous polyhedron defined by the inequalities $ A x ≥ 0$.
-"""
-function HomogenousPolyhedron(bA::AbstractMatrix)
-  #here BigInt, Integer, (fmpz, fmpq) -> Rational
-  #     nf_elem quad real field: -> QuadraticExtension
-  #     float -> Float
-  #     mpfr, BigFloat -> AccurateFloat
-  p = Polymake.perlobj("Polytope<Rational>", Dict("INEQUALITIES" => Rational{BigInt}.(bA)))
+function HomogenousPolyhedron(bA)
+  p = Polymake.perlobj("Polytope<Rational>", INEQUALITIES=matrix_for_polymake(bA))
   return HomogenousPolyhedron(p)
 end
 
 function Base.show(io::IO, H::HomogenousPolyhedron)
-    print(io, "Homogeneous polyhedron given by { x | A x ≤ 0 } where \n")
+    print(io, "Homogeneous polyhedron given by { x | A x ≥ 0 } where \n")
     print(io, "\nA = \n")
     Base.print_array(io, H.P.INEQUALITIES)
 end
@@ -44,8 +44,9 @@ end
 
 The (metric) polyhedron defined by
 
-$$P(A,b) = \{ x \, | \, Ax \le b \}.$$
+$$P(A,b) = \{ x |  Ax ≤ b \}.$$
 """
+
 struct Polyhedron #a real polymake polyhedron
     homogenous_polyhedron::HomogenousPolyhedron
 end
@@ -65,13 +66,12 @@ end
 
 The (metric) polyhedron defined by
 
-$$P^*(A,c) = \{ y \, | \, yA = c, y ≥ 0 \}.$$
+$$P^*(A,c) = \{ y | yA = c, y ≥ 0 \}.$$
 """
 struct DualPolyhedron #a real polymake polyhedron
     homogenous_polyhedron::HomogenousPolyhedron
 end
 function DualPolyhedron(A, c)
-# t = typeof(A[1,1])
     #here BigInt, Integer, (fmpz, fmpq) -> Rational
     #     nf_elem quad real field: -> QuadraticExtension
     #     float -> Float
@@ -80,15 +80,10 @@ function DualPolyhedron(A, c)
     m, n = size(A)
     cA = matrix_for_polymake([c -LinearAlgebra.transpose(A)])
     nonnegative = [zeros(BigInt, m, 1)  LinearAlgebra.I]
-    P_star = Polymake.perlobj( "Polytope<Rational>", Dict("EQUATIONS" => cA, "INEQUALITIES" => nonnegative))
+    P_star = Polymake.perlobj("Polytope<Rational>", EQUATIONS=cA, INEQUALITIES=nonnegative)
     H = HomogenousPolyhedron(P_star)
     return DualPolyhedron(H)
 end
-
-matrix_for_polymake(x::Nemo.fmpz_mat) = Matrix{BigInt}(x)
-matrix_for_polymake(x::Nemo.fmpq_mat) = Matrix{Rational{BigInt}}(x)
-matrix_for_polymake(x::AbstractMatrix{<:Integer}) = x
-matrix_for_polymake(x::AbstractMatrix{<:Rational{<:Integer}}) = x
 
 function Base.show(io::IO, P::DualPolyhedron)
     ineq = P.homogenous_polyhedron.P.EQUATIONS
@@ -100,38 +95,6 @@ function Base.show(io::IO, P::DualPolyhedron)
 end
 
 
-
-
-# function homogenous_polyhedron(bA::T) where {T <: MatElem{<:RingElem}}
-#     return homogenous_polyhedron(Matrix{BigInt}(bA))
-# end
-#
-#
-# # P^*(A,c) = { y : y A = c, y >= 0 }
-# @doc Markdown.doc"""
-#     dual_polyhedron(A, c) -> Polyhedron
-#
-# > The dual (metric) polyhedron defined by $yA = c$ and $ y \ge 0$.
-# """
-# function dual_polyhedron(A::T, c::T) where {T <: MatElem{<:RingElem}}
-#   t = typeof(A[1,1])
-#   #here BigInt, Integer, (fmpz, fmpq) -> Rational
-#   #     nf_elem quad real field: -> QuadraticExtension
-#   #     float -> Float
-#   #     mpfr, BigFloat -> AccurateFloat
-#   #
-#   cA = Array{BigInt, 2}([c -transpose(A)])
-#   m = rows(A)
-#   nonnegative = [zeros(BigInt,m,1)  Matrix{BigInt}(I,m,m)]
-#   p_star = Polymake.perlobj( "Polytope<Rational>", Dict("EQUATIONS" => cA, "INEQUALITIES" => nonnegative))
-#   H = HomogenousPolyhedron(t)
-#   H.P = p_star
-#   P_star = Polyhedron(H)
-#   return P_star
-# end
-#
-# _polytope(P::Polyhedron) = P.P.P
-# _polytope(H::HomogenousPolyhedron) = H.P
 #
 # #we don't have points yet, so I can only return the matrix.
 # # the polyhedron is not homogenous, so I strip the 1st entry
