@@ -2,9 +2,9 @@ module OscarPolytope
 
 import LinearAlgebra, Markdown, Nemo, Polymake
 
-export Polyhedron, DualPolyhedron, HomogenousPolyhedron
+export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, LP, minimal_vertex, minimal_value, maximal_vertex, maximal_value
 
-# export polyhedron, dual_polyhedron, homogenous_polyhedron,
+# export polyhedron, dual_polyhedron, homogeneous_polyhedron,
        # boundary_points_matrix, inner_points_matrix
 matrix_for_polymake(x::Nemo.fmpz_mat) = Matrix{BigInt}(x)
 matrix_for_polymake(x::Nemo.fmpq_mat) = Matrix{Rational{BigInt}}(x)
@@ -17,23 +17,23 @@ matrix_for_polymake(x::AbstractMatrix{<:Rational{<:Integer}}) = x
 #     mpfr, BigFloat -> AccurateFloat
 
 @doc Markdown.doc"""
-    HomogenousPolyhedron(A)
+    HomogeneousPolyhedron(A)
 
-The homogenous polyhedron defined by the inequalities $ A x ≥ 0$.
+The homogeneous polyhedron defined by the inequalities $ A x ≥ 0$.
 """
-struct HomogenousPolyhedron #
+struct HomogeneousPolyhedron #
     P::Polymake.pm_perl_ObjectAllocated
     boundedness::Symbol # Values: :unknown, :bounded, :unbounded
 end
-function HomogenousPolyhedron(P::Polymake.pm_perl_ObjectAllocated)
-    HomogenousPolyhedron(P, :unknown)
+function HomogeneousPolyhedron(P::Polymake.pm_perl_ObjectAllocated)
+    HomogeneousPolyhedron(P, :unknown)
 end
-function HomogenousPolyhedron(bA)
+function HomogeneousPolyhedron(bA)
   p = Polymake.perlobj("Polytope<Rational>", INEQUALITIES=matrix_for_polymake(bA))
-  return HomogenousPolyhedron(p)
+  return HomogeneousPolyhedron(p)
 end
 
-function Base.show(io::IO, H::HomogenousPolyhedron)
+function Base.show(io::IO, H::HomogeneousPolyhedron)
     print(io, "Homogeneous polyhedron given by { x | A x ≥ 0 } where \n")
     print(io, "\nA = \n")
     Base.print_array(io, H.P.INEQUALITIES)
@@ -48,12 +48,43 @@ $$P(A,b) = \{ x |  Ax ≤ b \}.$$
 """
 
 struct Polyhedron #a real polymake polyhedron
-    homogenous_polyhedron::HomogenousPolyhedron
+    homogeneous_polyhedron::HomogeneousPolyhedron
 end
-Polyhedron(A, b) = Polyhedron(HomogenousPolyhedron([b -A]))
+Polyhedron(A, b) = Polyhedron(HomogeneousPolyhedron([b -A]))
+
+struct LP
+   polymake_lp::Polymake.pm_perl_ObjectAllocated
+   function LP(P::Polyhedron, objective::Vector{Rational})
+      ambDim = Polymake.polytope.AMBIENT_DIM(P.homogeneous_polyhedron.P);
+      if size(objective)[1] != ambDim
+         error("objective has wrong dimension.")
+      end
+      o = copy(objective)
+      prepend!(o, 0)
+      lp = Polymake.perlobj("LinearProgram", LINEAR_OBJECTIVE=Polymake.pm_Vector{Rational}(o))
+      Polymake.add(P.homogeneous_polyhedron.P, "LP", lp)
+      new(lp)
+   end
+end
+
+function minimal_vertex(lp::LP)
+   result = lp.polymake_lp.MINIMAL_VERTEX
+   result[2:end]
+end
+function minimal_value(lp::LP)
+   lp.polymake_lp.MINIMAL_VALUE
+end
+
+function maximal_vertex(lp::LP)
+   result = lp.polymake_lp.MAXIMAL_VERTEX
+   result[2:end]
+end
+function maximal_value(lp::LP)
+   lp.polymake_lp.MAXIMAL_VALUE
+end
 
 function Base.show(io::IO, P::Polyhedron)
-    ineq = P.homogenous_polyhedron.P.INEQUALITIES
+    ineq = P.homogeneous_polyhedron.P.INEQUALITIES
     print(io, "Polyhedron given by { x | A x ≤ b } where \n")
     print(io, "\nA = \n")
     Base.print_array(io, -ineq[:,2:end])
@@ -69,7 +100,7 @@ The (metric) polyhedron defined by
 $$P^*(A,c) = \{ y | yA = c, y ≥ 0 \}.$$
 """
 struct DualPolyhedron #a real polymake polyhedron
-    homogenous_polyhedron::HomogenousPolyhedron
+    homogeneous_polyhedron::HomogeneousPolyhedron
 end
 function DualPolyhedron(A, c)
     #here BigInt, Integer, (fmpz, fmpq) -> Rational
@@ -81,12 +112,12 @@ function DualPolyhedron(A, c)
     cA = matrix_for_polymake([c -LinearAlgebra.transpose(A)])
     nonnegative = [zeros(BigInt, m, 1)  LinearAlgebra.I]
     P_star = Polymake.perlobj("Polytope<Rational>", EQUATIONS=cA, INEQUALITIES=nonnegative)
-    H = HomogenousPolyhedron(P_star)
+    H = HomogeneousPolyhedron(P_star)
     return DualPolyhedron(H)
 end
 
 function Base.show(io::IO, P::DualPolyhedron)
-    ineq = P.homogenous_polyhedron.P.EQUATIONS
+    ineq = P.homogeneous_polyhedron.P.EQUATIONS
     print(io, "DualPolyhedron given by { y | yA = c, y ≥ 0 } where \n")
     print(io, "\nA = \n")
     Base.print_array(io, -transpose(ineq[:,2:end]))
@@ -95,9 +126,43 @@ function Base.show(io::IO, P::DualPolyhedron)
 end
 
 
+"""
+   vertices(P::Polyhedron)
+
+Returns the vertices of a polyhedron.
+"""
+function vertices(P::Polyhedron)
+   result = P.homogeneous_polyhedron.P.VERTICES
+   selectedRows = Int[]
+   nrows = Polymake.rows(result)
+   for i=1:nrows
+      if result[i,1] == 1
+         push!(selectedRows, i)
+      end
+   end
+   result[selectedRows, 2:end]
+end
+
+"""
+   rays(P::Polyhedron)
+
+Returns the generators of the cone of unbounded directions of a polyhedron.
+"""
+function rays(P::Polyhedron)
+   result = P.homogeneous_polyhedron.P.VERTICES
+   selectedRows = Int[]
+   nrows = Polymake.rows(result)
+   for i=1:nrows
+      if result[i,1] == 0
+         push!(selectedRows, i)
+      end
+   end
+   result[selectedRows, 2:end]
+end
+
 #
 # #we don't have points yet, so I can only return the matrix.
-# # the polyhedron is not homogenous, so I strip the 1st entry
+# # the polyhedron is not homogeneous, so I strip the 1st entry
 # #TODO: since P is given by Ax <= b, should the "points" be rows or columns?
 #
 # @doc Markdown.doc"""
