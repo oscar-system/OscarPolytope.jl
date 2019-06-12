@@ -2,7 +2,7 @@ module OscarPolytope
 
 import LinearAlgebra, Markdown, Nemo, Polymake
 
-export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, LinearProgram, minimal_vertex, minimal_value, maximal_vertex, maximal_value, convex_hull, property_is_computed
+export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, LinearProgram, minimal_vertex, minimal_value, maximal_vertex, maximal_value, convex_hull, property_is_computed, lineality_space
 
 include("types.jl")
 
@@ -25,14 +25,23 @@ function Base.show(io::IO, H::HomogeneousPolyhedron)
 end
 
 @doc Markdown.doc"""
-    convex_hull(V)
+    convex_hull(V [, R [, L]])
 
-The polytope given as the convex hull of the columns of V.
+The polytope given as the convex hull of the columns of V. Optionally, rays (R)
+and generators of the lineality space (L) can be given as well.
 
 see Def. 2.11 and Def. 3.1.
 """
 function convex_hull(V)
    p = Polymake.perlobj("polytope::Polytope<Rational>", POINTS=homogenize(transpose(V), 1))
+   return Polyhedron(HomogeneousPolyhedron(p))
+end
+function convex_hull(V, R)
+   p = Polymake.perlobj("polytope::Polytope<Rational>", POINTS=vcat(homogenize(transpose(V), 1), homogenize(transpose(R), 0)))
+   return Polyhedron(HomogeneousPolyhedron(p))
+end
+function convex_hull(V, R, L)
+   p = Polymake.perlobj("polytope::Polytope<Rational>", POINTS=vcat(homogenize(transpose(V), 1), homogenize(transpose(R), 0)), INPUT_LINEALITY=homogenize(transpose(L),0))
    return Polyhedron(HomogeneousPolyhedron(p))
 end
 
@@ -82,15 +91,6 @@ function Base.show(io::IO, P::Polyhedron)
    end
 end
 
-function Base.show(io::IO, P::DualPolyhedron)
-    ineq = P.homogeneous_polyhedron.P.EQUATIONS
-    print(io, "DualPolyhedron given by { y | yA = c, y ≥ 0 } where \n")
-    print(io, "\nA = \n")
-    Base.print_array(io, -transpose(ineq[:,2:end]))
-    print(io, "\n\nc = \n")
-    Base.print_array(io, ineq[:,1])
-end
-
 
 """
    vertices(P::Polyhedron)
@@ -116,6 +116,23 @@ Returns the generators of the cone of unbounded directions of a polyhedron.
 """
 function rays(P::Polyhedron)
    result = P.homogeneous_polyhedron.P.VERTICES
+   selectedRows = Int[]
+   nrows = Polymake.rows(result)
+   for i=1:nrows
+      if result[i,1] == 0
+         push!(selectedRows, i)
+      end
+   end
+   transpose(result[selectedRows, 2:end])
+end
+
+"""
+   lineality_space(P::Polyhedron)
+
+Returns the generators of the lineality space of a polyhedron.
+"""
+function lineality_space(P::Polyhedron)
+   result = P.homogeneous_polyhedron.P.LINEALITY_SPACE
    selectedRows = Int[]
    nrows = Polymake.rows(result)
    for i=1:nrows

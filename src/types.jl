@@ -52,9 +52,6 @@ $$P^*(A,c) = \{ y | yA = c, y ≥ 0 \}.$$
 
 see Theorem 4.11.
 """
-struct DualPolyhedron #a real polymake polyhedron
-    homogeneous_polyhedron::HomogeneousPolyhedron
-end
 function DualPolyhedron(A, c)
     #here BigInt, Integer, (fmpz, fmpq) -> Rational
     #     nf_elem quad real field: -> QuadraticExtension
@@ -64,7 +61,7 @@ function DualPolyhedron(A, c)
     m, n = size(A)
     cA = matrix_for_polymake([c -LinearAlgebra.transpose(A)])
     nonnegative = [zeros(BigInt, m, 1)  LinearAlgebra.I]
-    P_star = Polymake.perlobj("Polytope<Rational>", EQUATIONS=cA, INEQUALITIES=nonnegative)
+    P_star = Polymake.perlobj("polytope::Polytope<Rational>", EQUATIONS=cA, INEQUALITIES=nonnegative)
     H = HomogeneousPolyhedron(P_star)
-    return DualPolyhedron(H)
+    return Polyhedron(H)
 end
