@@ -2,7 +2,7 @@ module OscarPolytope
 
 import LinearAlgebra, Markdown, Nemo, Polymake
 
-export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, LP, minimal_vertex, minimal_value, maximal_vertex, maximal_value
+export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, LP, minimal_vertex, minimal_value, maximal_vertex, maximal_value, convex_hull, property_is_computed
 
 # export polyhedron, dual_polyhedron, homogeneous_polyhedron,
        # boundary_points_matrix, inner_points_matrix
@@ -29,7 +29,7 @@ function HomogeneousPolyhedron(P::Polymake.pm_perl_ObjectAllocated)
     HomogeneousPolyhedron(P, :unknown)
 end
 function HomogeneousPolyhedron(bA)
-  p = Polymake.perlobj("Polytope<Rational>", INEQUALITIES=matrix_for_polymake(bA))
+  p = Polymake.perlobj("polytope::Polytope<Rational>", INEQUALITIES=matrix_for_polymake(bA))
   return HomogeneousPolyhedron(p)
 end
 
@@ -45,12 +45,41 @@ end
 The (metric) polyhedron defined by
 
 $$P(A,b) = \{ x |  Ax ≤ b \}.$$
+
+see Def. 3.35 and Section 4.1.
 """
 
 struct Polyhedron #a real polymake polyhedron
     homogeneous_polyhedron::HomogeneousPolyhedron
 end
 Polyhedron(A, b) = Polyhedron(HomogeneousPolyhedron([b -A]))
+
+@doc Markdown.doc"""
+    convex_hull(V)
+
+The polytope given as the convex hull of the columns of V.
+
+see Def. 2.11 and Def. 3.1. 
+"""
+function convex_hull(V)
+   p = Polymake.perlobj("polytope::Polytope<Rational>", POINTS=homogenize(transpose(V), 1))
+   return Polyhedron(HomogeneousPolyhedron(p))
+end
+
+
+augment(vec::AbstractVector{T}, val) where T = vcat(T(val), vec)
+augment(mat::AbstractMatrix, vec::AbstractVector) = hcat(vec, mat)
+
+homogenize(::Type{T}, vec::AbstractVector, val::T=T(0)) where T = augment(T.
+(vec), val)
+homogenize(::Type{T}, mat::AbstractMatrix, val::T=T(1)) where T = augment(T.
+(mat), repeat([val], size(mat,1)))
+homogenize(mat::AbstractVecOrMat{T}, val=T(1)) where T = homogenize(T, mat,
+val)
+
+dehomogenize(vec::AbstractVector) = vec[2:end]
+dehomogenize(mat::AbstractMatrix) = mat[:, 2:end]
+
 
 struct LP
    polymake_lp::Polymake.pm_perl_ObjectAllocated
@@ -83,13 +112,23 @@ function maximal_value(lp::LP)
    lp.polymake_lp.MAXIMAL_VALUE
 end
 
+function property_is_computed(P::Polymake.pm_perl_ObjectAllocated, S::Symbol)
+   pv = Polymake.internal_call_method("lookup", P, Any[string(S)])
+   return nothing != Polymake.convert_from_property_value(pv)
+end
+function property_is_computed(P::Polyhedron, S::Symbol)
+   return property_is_computed(P.homogeneous_polyhedron.P, S)
+end
+
 function Base.show(io::IO, P::Polyhedron)
-    ineq = P.homogeneous_polyhedron.P.INEQUALITIES
-    print(io, "Polyhedron given by { x | A x ≤ b } where \n")
-    print(io, "\nA = \n")
-    Base.print_array(io, -ineq[:,2:end])
-    print(io, "\n\nb = \n")
-    Base.print_array(io, ineq[:,1])
+   if(property_is_computed(P, :INEQUALITIES))
+      ineq = P.homogeneous_polyhedron.P.INEQUALITIES
+      print(io, "Polyhedron given by { x | A x ≤ b } where \n")
+      print(io, "\nA = \n")
+      Base.print_array(io, -ineq[:,2:end])
+      print(io, "\n\nb = \n")
+      Base.print_array(io, ineq[:,1])
+   end
 end
 
 @doc Markdown.doc"""
@@ -98,6 +137,8 @@ end
 The (metric) polyhedron defined by
 
 $$P^*(A,c) = \{ y | yA = c, y ≥ 0 \}.$$
+
+see Theorem 4.11.
 """
 struct DualPolyhedron #a real polymake polyhedron
     homogeneous_polyhedron::HomogeneousPolyhedron
@@ -140,7 +181,7 @@ function vertices(P::Polyhedron)
          push!(selectedRows, i)
       end
    end
-   result[selectedRows, 2:end]
+   transpose(result[selectedRows, 2:end])
 end
 
 """
@@ -157,7 +198,7 @@ function rays(P::Polyhedron)
          push!(selectedRows, i)
       end
    end
-   result[selectedRows, 2:end]
+   transpose(result[selectedRows, 2:end])
 end
 
 #
