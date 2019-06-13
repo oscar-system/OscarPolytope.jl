@@ -24,3 +24,21 @@ end
 function property_is_computed(P::Polyhedron, S::Symbol)
    return property_is_computed(P.homogeneous_polyhedron, S)
 end
+
+function decompose_vdata(A)
+   ncols = (size(A))[2]
+   vertexIndices = Int[]
+   rayIndices = Int[]
+   for i=1:ncols
+      if A[1, i] == 0
+         push!(rayIndices, i)
+      elseif A[1, i] == 1
+         push!(vertexIndices, i)
+      end
+   end
+   return (A[2:end, vertexIndices], A[2:end, rayIndices])
+end
+
+function decompose_hdata(A)
+   (-A[:,2:end], A[:,1])
+end

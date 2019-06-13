@@ -80,7 +80,7 @@ end
 Returns the dimension of a polyhedron.
 """
 function dim(P::Polyhedron)
-   return P.homogeneous_polyhedron.polymakePolytope.DIM
+   return dim(P.homogeneous_polyhedron)
 end
 
 """
@@ -89,15 +89,8 @@ end
 Returns the vertices of a polyhedron.
 """
 function vertices(P::Polyhedron)
-   result = P.homogeneous_polyhedron.polymakePolytope.VERTICES
-   selectedRows = Int[]
-   nrows = Polymake.rows(result)
-   for i=1:nrows
-      if result[i,1] == 1
-         push!(selectedRows, i)
-      end
-   end
-   transpose(result[selectedRows, 2:end])
+   result = decompose_vdata(vertices(P.homogeneous_polyhedron))
+   return result[1]
 end
 
 """
@@ -106,15 +99,8 @@ end
 Returns minimal set of generators of the cone of unbounded directions of a polyhedron.
 """
 function rays(P::Polyhedron)
-   result = P.homogeneous_polyhedron.polymakePolytope.VERTICES
-   selectedRows = Int[]
-   nrows = Polymake.rows(result)
-   for i=1:nrows
-      if result[i,1] == 0
-         push!(selectedRows, i)
-      end
-   end
-   transpose(result[selectedRows, 2:end])
+   result = decompose_vdata(vertices(P.homogeneous_polyhedron))
+   return result[2]
 end
 
 """
@@ -123,15 +109,8 @@ end
 Returns a basis of the lineality space of a polyhedron.
 """
 function lineality_space(P::Polyhedron)
-   result = P.homogeneous_polyhedron.polymakePolytope.LINEALITY_SPACE
-   selectedRows = Int[]
-   nrows = Polymake.rows(result)
-   for i=1:nrows
-      if result[i,1] == 0
-         push!(selectedRows, i)
-      end
-   end
-   transpose(result[selectedRows, 2:end])
+   result = decompose_vdata(lineality_space(P.homogeneous_polyhedron))
+   return result[2]
 end
 
 """
@@ -140,8 +119,7 @@ end
 Returns the facets of a polyhedron.
 """
 function facets(P::Polyhedron)
-   result = P.homogeneous_polyhedron.polymakePolytope.FACETS
-   (-result[:,2:end], result[:,1])
+   decompose_vdata(facets(P.homogeneous_polyhedron))
 end
 
 ###############################################################################
@@ -178,10 +156,8 @@ end
 Construct the $[-1,1]$-cube in dimension $d$. If $u$ and $l$ are given, the $[l,u]$-cube in dimension $d$ is returned.
 """
 function cube(d)
-   C = Polymake.Polytope.cube(d)
-   return Polyhedron(C)
+   return Polyhedron(homogeneous_cube(d))
 end
 function cube(d, u, l)
-   C = Polymake.Polytope.cube(d, u, l)
-   return Polyhedron(C)
+   return Polyhedron(homogeneous_cube(d,u,l))
 end

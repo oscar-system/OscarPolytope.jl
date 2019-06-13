@@ -15,6 +15,11 @@ function HomogeneousPolyhedron(bA)
   return HomogeneousPolyhedron(p)
 end
 
+###############################################################################
+###############################################################################
+### Display
+###############################################################################
+###############################################################################
 function Base.show(io::IO, H::HomogeneousPolyhedron)
    if(property_is_computed(H, :INEQUALITIES))
       print(io, "Homogeneous polyhedron given by { x | A x ≥ 0 } where \n")
@@ -31,4 +36,64 @@ function Base.isequal(H0::HomogeneousPolyhedron, H1::HomogeneousPolyhedron)
       return false
    end
    return true
+end
+
+###############################################################################
+###############################################################################
+### Access properties
+###############################################################################
+###############################################################################
+"""
+   dim(H::HomogeneousPolyhedron)
+
+Returns the dimension of a polyhedron.
+"""
+function dim(H::HomogeneousPolyhedron)
+   return H.polymakePolytope.DIM
+end
+
+"""
+   vertices(H::HomogeneousPolyhedron)
+
+Returns the vertices of a polyhedron.
+"""
+function vertices(H::HomogeneousPolyhedron)
+   return transpose(H.polymakePolytope.VERTICES)
+end
+
+"""
+   lineality_space(H::HomogeneousPolyhedron)
+
+Returns a basis of the lineality space of a polyhedron.
+"""
+function lineality_space(H::HomogeneousPolyhedron)
+   return transpose(H.polymakePolytope.LINEALITY_SPACE)
+end
+
+"""
+   facets(H::HomogeneousPolyhedron)
+
+Returns the facets of a polyhedron.
+"""
+function facets(H::HomogeneousPolyhedron)
+   return H.polymakePolytope.FACETS
+end
+
+###############################################################################
+###############################################################################
+### Standard constructions
+###############################################################################
+###############################################################################
+@doc Markdown.doc"""
+   homogeneous_cube(d [, u, l])
+
+Construct the $[-1,1]$-cube in dimension $d$. If $u$ and $l$ are given, the $[l,u]$-cube in dimension $d$ is returned.
+"""
+function homogeneous_cube(d)
+   C = Polymake.Polytope.cube(d)
+   return HomogeneousPolyhedron(C)
+end
+function homogeneous_cube(d, u, l)
+   C = Polymake.Polytope.cube(d, u, l)
+   return HomogeneousPolyhedron(C)
 end
