@@ -23,6 +23,7 @@ C1 = cube(2,1,0)
 @test C0 == C0
 @test typeof(dim(Q0)) == Int
 @test typeof(ambient_dim(Q0)) == Int
+@test Q2 == convex_hull(vertices(Q2), rays(Q2), lineality_space(Q2))
 end
 
 @testset "convex_hull" begin
