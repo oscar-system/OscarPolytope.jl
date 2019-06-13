@@ -46,3 +46,12 @@ end
 @test size(vertices(C0)) == (2,4)
 @test C0 == convex_hull(vertices(C0))
 end
+
+@testset "LinearProgram" begin
+LP = PrimalProgram([1;1],[1 0; 0 1;-1 0; 0 -1],[1;1;0;0])
+@test typeof(LP) == LinearProgram
+@test minimal_value(LP) == 0
+@test maximal_value(LP) == 2
+@test minimal_vertex(LP) == [0;0]
+@test maximal_vertex(LP) == [1;1]
+end
