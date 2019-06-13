@@ -26,8 +26,7 @@ C1 = cube(2,1,0)
 end
 
 @testset "convex_hull" begin
-V = vertices(Q0)
-@test V == pts 
+@test size(vertices(Q0)) == (2,3)
 @test size(vertices(Q1)) == (2,3)
 @test size(rays(Q1)) == (2,1)
 @test size(lineality_space(Q1)) == (2,0)
@@ -44,4 +43,5 @@ end
 
 @testset "standard constructions" begin
 @test size(vertices(C0)) == (2,4)
+@test C0 == convex_hull(vertices(C0))
 end

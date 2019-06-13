@@ -28,7 +28,7 @@ function Base.show(io::IO, H::HomogeneousPolyhedron)
    end
 end
 
-function Base.isequal(H0::HomogeneousPolyhedron, H1::HomogeneousPolyhedron)
+function ==(H0::HomogeneousPolyhedron, H1::HomogeneousPolyhedron)
    if(! Polymake.Polytope.included_polyhedra(H0.polymakePolytope, H1.polymakePolytope))
       return false
    end

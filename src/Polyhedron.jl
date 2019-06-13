@@ -14,7 +14,7 @@ end
 Polyhedron(A, b) = Polyhedron(HomogeneousPolyhedron([b -A]))
 Polyhedron(pmp::Polymake.pm_perl_ObjectAllocated) = Polyhedron(HomogeneousPolyhedron(pmp))
 
-function Base.isequal(P0::Polyhedron, P1::Polyhedron)
+function ==(P0::Polyhedron, P1::Polyhedron)
    return P0.homogeneous_polyhedron == P1.homogeneous_polyhedron
 end
 
