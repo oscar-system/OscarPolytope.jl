@@ -40,5 +40,5 @@ function decompose_vdata(A)
 end
 
 function decompose_hdata(A)
-   (-A[:,2:end], A[:,1])
+   (-A[:,2:end], A[:,1:1])
 end

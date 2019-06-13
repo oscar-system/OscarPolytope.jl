@@ -18,6 +18,12 @@ C1 = cube(2,1,0)
 @test Q0 != Q1
 @test C0 != C1
 @test C0 == C0
+@test dim(Q0) == 2
+@test dim(Q1) == 2
+@test dim(Q2) == 2
+@test ambient_dim(Q0) == 2
+@test ambient_dim(Q1) == 2
+@test ambient_dim(Q2) == 2
 end
 
 @testset "convex_hull" begin

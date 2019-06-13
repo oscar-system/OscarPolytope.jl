@@ -84,6 +84,15 @@ function dim(P::Polyhedron)
 end
 
 """
+   ambient_dim(P::Polyhedron)
+
+Returns the ambient dimension of a polyhedron.
+"""
+function ambient_dim(P::Polyhedron)
+   return ambient_dim(P.homogeneous_polyhedron) - 1
+end
+
+"""
    vertices(P::Polyhedron)
 
 Returns the vertices of a polyhedron.
@@ -119,7 +128,7 @@ end
 Returns the facets of a polyhedron.
 """
 function facets(P::Polyhedron)
-   decompose_vdata(facets(P.homogeneous_polyhedron))
+   decompose_hdata(facets(P.homogeneous_polyhedron))
 end
 
 ###############################################################################
