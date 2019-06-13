@@ -3,7 +3,7 @@ module OscarPolytope
 import LinearAlgebra, Markdown, Nemo, Polymake
 import Base: ==
 
-export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, LinearProgram, minimal_vertex, minimal_value, maximal_vertex, maximal_value, convex_hull, property_is_computed, lineality_space, cube, facets, dim, ambient_dim
+export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, LinearProgram, minimal_vertex, minimal_value, maximal_vertex, maximal_value, convex_hull, property_is_computed, lineality_space, cube, facets, dim, ambient_dim, PrimalProgram, DualProgram
 
 include("HomogeneousPolyhedron.jl")
 include("Polyhedron.jl")
