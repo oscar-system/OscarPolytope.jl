@@ -14,6 +14,10 @@ C1 = cube(2,1,0)
 @test typeof(Q2) == Polyhedron
 @test typeof(C0) == Polyhedron
 @test typeof(C1) == Polyhedron
+@test Q0 == Q0
+@test Q0 != Q1
+@test C0 != C1
+@test C0 == C0
 end
 
 @testset "convex_hull" begin
