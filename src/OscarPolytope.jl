@@ -36,19 +36,6 @@ function maximal_value(lp::LinearProgram)
 end
 
 
-function Base.show(io::IO, P::Polyhedron)
-   if(property_is_computed(P, :INEQUALITIES))
-      ineq = P.homogeneous_polyhedron.polymakePolytope.INEQUALITIES
-      print(io, "Polyhedron given by { x | A x ≤ b } where \n")
-      print(io, "\nA = \n")
-      Base.print_array(io, -ineq[:,2:end])
-      print(io, "\n\nb = \n")
-      Base.print_array(io, ineq[:,1])
-   end
-end
-
-
-
 #
 # #we don't have points yet, so I can only return the matrix.
 # # the polyhedron is not homogeneous, so I strip the 1st entry

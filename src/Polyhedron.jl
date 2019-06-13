@@ -34,6 +34,31 @@ function convex_hull(V, R, L)
    p = Polymake.perlobj("polytope::Polytope<Rational>", POINTS=vcat(homogenize(transpose(V), 1), homogenize(transpose(R), 0)), INPUT_LINEALITY=homogenize(transpose(L),0))
    return Polyhedron(HomogeneousPolyhedron(p))
 end
+###############################################################################
+###############################################################################
+### Display
+###############################################################################
+###############################################################################
+function Base.show(io::IO, P::Polyhedron)
+   if(property_is_computed(P, :VERTICES))
+      print(io, "Polyhedron given as the convex hull of the columns of V, where\nV = \n")
+      Base.print_array(io, vertices(P))
+      R = rays(P)
+      if((size(R))[2] > 0)
+         print(io, "\n\nwith rays given as the columns of R, where\nR =\n")
+         Base.print_array(io, rays(P))
+      end
+      return
+   end
+   if(property_is_computed(P, :INEQUALITIES))
+      ineq = P.homogeneous_polyhedron.polymakePolytope.INEQUALITIES
+      print(io, "Polyhedron given by { x | A x ≤ b } where \n")
+      print(io, "\nA = \n")
+      Base.print_array(io, -ineq[:,2:end])
+      print(io, "\n\nb = \n")
+      Base.print_array(io, ineq[:,1])
+   end
+end
 
 ###############################################################################
 ###############################################################################
