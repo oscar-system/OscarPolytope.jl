@@ -14,16 +14,15 @@ C1 = cube(2,1,0)
 @test typeof(Q2) == Polyhedron
 @test typeof(C0) == Polyhedron
 @test typeof(C1) == Polyhedron
-@test Q0 == Q0
+@test typeof(Q0 == Q0) == Bool
+@test typeof(Q0 == Q1) == Bool
+@test typeof(Q0 != Q0) == Bool
+@test typeof(Q0 != Q1) == Bool
 @test Q0 != Q1
 @test C0 != C1
 @test C0 == C0
-@test dim(Q0) == 2
-@test dim(Q1) == 2
-@test dim(Q2) == 2
-@test ambient_dim(Q0) == 2
-@test ambient_dim(Q1) == 2
-@test ambient_dim(Q2) == 2
+@test typeof(dim(Q0)) == Int
+@test typeof(ambient_dim(Q0)) == Int
 end
 
 @testset "convex_hull" begin
@@ -35,6 +34,12 @@ V = vertices(Q0)
 @test size(vertices(Q2)) == (2,2)
 @test size(rays(Q2)) == (2,0)
 @test size(lineality_space(Q2)) == (2,1)
+@test dim(Q0) == 2
+@test dim(Q1) == 2
+@test dim(Q2) == 2
+@test ambient_dim(Q0) == 2
+@test ambient_dim(Q1) == 2
+@test ambient_dim(Q2) == 2
 end
 
 @testset "standard constructions" begin

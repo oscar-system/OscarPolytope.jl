@@ -2,6 +2,7 @@ matrix_for_polymake(x::Nemo.fmpz_mat) = Matrix{BigInt}(x)
 matrix_for_polymake(x::Nemo.fmpq_mat) = Matrix{Rational{BigInt}}(x)
 matrix_for_polymake(x::AbstractMatrix{<:Integer}) = x
 matrix_for_polymake(x::AbstractMatrix{<:Rational{<:Integer}}) = x
+matrix_for_polymake(x::Polymake.pm_MatrixAllocated{Polymake.pm_Rational}) = x
 
 augment(vec::AbstractVector{T}, val) where T = vcat(T(val), vec)
 augment(mat::AbstractMatrix, vec::AbstractVector) = hcat(vec, mat)
