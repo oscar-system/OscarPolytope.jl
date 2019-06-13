@@ -8,7 +8,7 @@ export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, Linear
 include("HomogeneousPolyhedron.jl")
 include("Polyhedron.jl")
 include("helpers.jl")
-include("types.jl")
+include("LinearProgram.jl")
 
 # export polyhedron, dual_polyhedron, homogeneous_polyhedron,
        # boundary_points_matrix, inner_points_matrix
@@ -19,22 +19,6 @@ include("types.jl")
 #     mpfr, BigFloat -> AccurateFloat
 
 
-
-function minimal_vertex(lp::LinearProgram)
-   result = lp.polymake_lp.MINIMAL_VERTEX
-   result[2:end]
-end
-function minimal_value(lp::LinearProgram)
-   lp.polymake_lp.MINIMAL_VALUE
-end
-
-function maximal_vertex(lp::LinearProgram)
-   result = lp.polymake_lp.MAXIMAL_VERTEX
-   result[2:end]
-end
-function maximal_value(lp::LinearProgram)
-   lp.polymake_lp.MAXIMAL_VALUE
-end
 
 
 #

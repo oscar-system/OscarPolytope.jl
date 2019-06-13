@@ -35,3 +35,21 @@ function DualProgram(c, A, b)
    fr = DualPolyhedron(A,c)
    return LinearProgram(fr, b)
 end
+
+
+function minimal_vertex(lp::LinearProgram)
+   result = lp.polymake_lp.MINIMAL_VERTEX
+   result[2:end]
+end
+function minimal_value(lp::LinearProgram)
+   lp.polymake_lp.MINIMAL_VALUE
+end
+
+function maximal_vertex(lp::LinearProgram)
+   result = lp.polymake_lp.MAXIMAL_VERTEX
+   result[2:end]
+end
+function maximal_value(lp::LinearProgram)
+   lp.polymake_lp.MAXIMAL_VALUE
+end
+
