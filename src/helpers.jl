@@ -3,6 +3,7 @@ matrix_for_polymake(x::Nemo.fmpq_mat) = Matrix{Rational{BigInt}}(x)
 matrix_for_polymake(x::AbstractMatrix{<:Integer}) = x
 matrix_for_polymake(x::AbstractMatrix{<:Rational{<:Integer}}) = x
 matrix_for_polymake(x::Polymake.pm_MatrixAllocated{Polymake.pm_Rational}) = x
+matrix_for_polymake(x::AbstractArray) = x
 
 function augment(vec::V, val) where {T, V<:AbstractVector{T}}
    s = size(vec)
@@ -52,5 +53,5 @@ function decompose_vdata(A::AbstractMatrix)
 end
 
 function decompose_hdata(A)
-   (-A[:,2:end], A[:,1:1])
+   (-A[:,2:end], A[:,1])
 end

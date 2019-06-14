@@ -48,10 +48,16 @@ end
 end
 
 @testset "LinearProgram" begin
-   LP = PrimalProgram([1;1],[1 0; 0 1;-1 0; 0 -1],[1;1;0;0])
-   @test typeof(LP) == LinearProgram
-   @test minimal_value(LP) == 0
-   @test maximal_value(LP) == 2
-   @test minimal_vertex(LP) == [0;0]
-   @test maximal_vertex(LP) == [1;1]
+   A = [-1 0; 0 -1; 1 0; 0 1]
+   b = [0; 0; 1; 1]
+   objective = [1;1]
+   primal = PrimalProgram(objective,A,b)
+   dual = DualProgram(objective,A,b)
+   @test typeof(primal) == LinearProgram
+   @test minimal_value(primal) == 0
+   @test maximal_value(primal) == 2
+   @test minimal_vertex(primal) == [0;0]
+   @test maximal_vertex(primal) == [1;1]
+   @test maximal_value(primal) == minimal_value(dual)
+   @test minimal_vertex(dual) == [0,0,1,1]
 end
