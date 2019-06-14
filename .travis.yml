@@ -22,3 +22,5 @@ addons:
     packages:
     - gcc-7
     - g++-7
+
+codecov: true
