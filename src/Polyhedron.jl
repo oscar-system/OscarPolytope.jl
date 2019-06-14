@@ -1,19 +1,3 @@
-@doc Markdown.doc"""
-    Polyhedron(A, b)
-
-The (metric) polyhedron defined by
-
-$$P(A,b) = \{ x |  Ax ≤ b \}.$$
-
-see Def. 3.35 and Section 4.1.
-"""
-
-struct Polyhedron #a real polymake polyhedron
-    homogeneous_polyhedron::HomogeneousPolyhedron
-end
-Polyhedron(A, b) = Polyhedron(HomogeneousPolyhedron([b -A]))
-Polyhedron(pmp::Polymake.pm_perl_ObjectAllocated) = Polyhedron(HomogeneousPolyhedron(pmp))
-
 function ==(P0::Polyhedron, P1::Polyhedron)
    return P0.homogeneous_polyhedron == P1.homogeneous_polyhedron
 end

@@ -1,12 +1,3 @@
-@doc Markdown.doc"""
-    HomogeneousPolyhedron(A)
-
-The homogeneous polyhedron defined by the inequalities $ A x ≥ 0$.
-"""
-struct HomogeneousPolyhedron #
-    polymakePolytope::Polymake.pm_perl_ObjectAllocated
-    boundedness::Symbol # Values: :unknown, :bounded, :unbounded
-end
 function HomogeneousPolyhedron(polymakePolytope::Polymake.pm_perl_ObjectAllocated)
     HomogeneousPolyhedron(polymakePolytope, :unknown)
 end
