@@ -11,7 +11,7 @@ function HomogeneousPolyhedron(polymakePolytope::Polymake.pm_perl_ObjectAllocate
     HomogeneousPolyhedron(polymakePolytope, :unknown)
 end
 function HomogeneousPolyhedron(bA)
-  p = Polymake.perlobj("polytope::Polytope<Rational>", INEQUALITIES=matrix_for_polymake(bA))
+  p = Polymake.@pm Polytope.Polytope{Rational}(:INEQUALITIES=>matrix_for_polymake(bA))
   return HomogeneousPolyhedron(p)
 end
 
@@ -49,7 +49,7 @@ end
 Returns the dimension of a polyhedron.
 """
 function dim(H::HomogeneousPolyhedron)
-   return H.polymakePolytope.CONE_DIM - 1
+   return Polymake.Polytope.dim(H.polymakePolytope)
 end
 
 """
