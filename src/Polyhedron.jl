@@ -73,7 +73,7 @@ end
 Returns the ambient dimension of a polyhedron.
 """
 function ambient_dim(P::Polyhedron)
-   return ambient_dim(P.homogeneous_polyhedron) - 1
+   return ambient_dim(P.homogeneous_polyhedron)
 end
 
 """

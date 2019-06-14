@@ -49,7 +49,7 @@ end
 Returns the ambient dimension of a polyhedron.
 """
 function ambient_dim(H::HomogeneousPolyhedron)
-   return H.polymakePolytope.CONE_AMBIENT_DIM
+   return Polymake.Polytope.ambient_dim(H.polymakePolytope)
 end
 
 """
