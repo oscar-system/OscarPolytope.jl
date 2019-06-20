@@ -5,7 +5,7 @@ matrix_for_polymake(x::AbstractMatrix{<:Rational{<:Integer}}) = x
 matrix_for_polymake(x::Polymake.pm_MatrixAllocated{Polymake.pm_Rational}) = x
 matrix_for_polymake(x::AbstractArray) = x
 
-function augment(vec::V, val) where {T, V<:AbstractVector{T}}
+function augment(vec::AbstractVector, val)
    s = size(vec)
    res = similar(vec, (s[1]+1,))
    res[1] = val
@@ -13,7 +13,7 @@ function augment(vec::V, val) where {T, V<:AbstractVector{T}}
    return res
 end
 
-function augment(mat::M, vec::AbstractVector) where {T, M<:AbstractMatrix{T}}
+function augment(mat::AbstractMatrix, vec::AbstractVector)
    s = size(mat)
    res = similar(mat, (s[1], s[2]+1))
    res[:, 1] = vec
