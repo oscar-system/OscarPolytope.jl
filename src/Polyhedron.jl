@@ -10,15 +10,15 @@ and generators of the lineality space (L) can be given as well.
 
 see Def. 2.11 and Def. 3.1.
 """
-function convex_hull(V)
+function convex_hull(V::AbstractVecOrMat)
    p = Polymake.@pm Polytope.Polytope{Rational}(:POINTS=>homogenize(transpose(V), 1))
    return Polyhedron(HomogeneousPolyhedron(p))
 end
-function convex_hull(V, R)
+function convex_hull(V::AbstractVecOrMat, R::AbstractVecOrMat)
    p = Polymake.@pm Polytope.Polytope{Rational}(:POINTS=>vcat(homogenize(transpose(V), 1), homogenize(transpose(R), 0)))
    return Polyhedron(HomogeneousPolyhedron(p))
 end
-function convex_hull(V, R, L)
+function convex_hull(V::AbstractVecOrMat, R::AbstractVecOrMat, L::AbstractVecOrMat)
    p = Polymake.@pm Polytope.Polytope{Rational}(:POINTS=>vcat(homogenize(transpose(V), 1), homogenize(transpose(R), 0)), :INPUT_LINEALITY=>homogenize(transpose(L),0))
    return Polyhedron(HomogeneousPolyhedron(p))
 end
