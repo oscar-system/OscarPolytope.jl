@@ -42,18 +42,14 @@ end
 
 Returns the dimension of a polyhedron.
 """
-function dim(H::HomogeneousPolyhedron)
-   return Polymake.Polytope.dim(H.polymakePolytope)
-end
+Polytope.dim(H::HomogeneousPolyhedron) = Polytope.dim(H.polymakePolytope)
 
 """
    ambient_dim(H::HomogeneousPolyhedron)
 
 Returns the ambient dimension of a polyhedron.
 """
-function ambient_dim(H::HomogeneousPolyhedron)
-   return Polymake.Polytope.ambient_dim(H.polymakePolytope)
-end
+Polytope.ambient_dim(H::HomogeneousPolyhedron) = Polytope.ambient_dim(H.polymakePolytope)
 
 """
    vertices(H::HomogeneousPolyhedron)

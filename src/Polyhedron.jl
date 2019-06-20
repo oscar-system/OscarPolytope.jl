@@ -64,18 +64,14 @@ end
 
 Returns the dimension of a polyhedron.
 """
-function dim(P::Polyhedron)
-   return dim(P.homogeneous_polyhedron)
-end
+Polytope.dim(P::Polyhedron) = dim(P.homogeneous_polyhedron)
 
 """
    ambient_dim(P::Polyhedron)
 
 Returns the ambient dimension of a polyhedron.
 """
-function ambient_dim(P::Polyhedron)
-   return ambient_dim(P.homogeneous_polyhedron)
-end
+Polytope.ambient_dim(P::Polyhedron) = ambient_dim(P.homogeneous_polyhedron)
 
 """
    vertices(P::Polyhedron)
