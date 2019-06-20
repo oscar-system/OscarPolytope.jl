@@ -78,39 +78,29 @@ Polytope.ambient_dim(P::Polyhedron) = ambient_dim(P.homogeneous_polyhedron)
 
 Returns the vertices of a polyhedron.
 """
-function vertices(P::Polyhedron)
-   result = decompose_vdata(vertices(P.homogeneous_polyhedron))
-   return result[1]
-end
+vertices(P::Polyhedron) = decompose_vdata(vertices(P.homogeneous_polyhedron))[1]
 
 """
    rays(P::Polyhedron)
 
 Returns minimal set of generators of the cone of unbounded directions of a polyhedron.
 """
-function rays(P::Polyhedron)
-   result = decompose_vdata(vertices(P.homogeneous_polyhedron))
-   return result[2]
-end
+rays(P::Polyhedron) = decompose_vdata(vertices(P.homogeneous_polyhedron))[2]
 
 """
    lineality_space(P::Polyhedron)
 
 Returns a basis of the lineality space of a polyhedron.
 """
-function lineality_space(P::Polyhedron)
-   result = decompose_vdata(lineality_space(P.homogeneous_polyhedron))
-   return result[2]
-end
+lineality_space(P::Polyhedron) =
+   decompose_vdata(lineality_space(P.homogeneous_polyhedron))[2]
 
 """
    facets(P::Polyhedron)
 
 Returns the facets of a polyhedron.
 """
-function facets(P::Polyhedron)
-   decompose_hdata(facets(P.homogeneous_polyhedron))
-end
+facets(P::Polyhedron) = decompose_hdata(facets(P.homogeneous_polyhedron))
 
 ###############################################################################
 ###############################################################################
@@ -145,9 +135,5 @@ end
 
 Construct the $[-1,1]$-cube in dimension $d$. If $u$ and $l$ are given, the $[l,u]$-cube in dimension $d$ is returned.
 """
-function cube(d)
-   return Polyhedron(homogeneous_cube(d))
-end
-function cube(d, u, l)
-   return Polyhedron(homogeneous_cube(d,u,l))
-end
+cube(d) = Polyhedron(homogeneous_cube(d))
+cube(d, u, l) = Polyhedron(homogeneous_cube(d,u,l))
