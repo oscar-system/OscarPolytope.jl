@@ -125,7 +125,7 @@ function DualPolyhedron(A, c)
     m, n = size(A)
     cA = matrix_for_polymake([c -LinearAlgebra.transpose(A)])
     nonnegative = [zeros(BigInt, m, 1)  LinearAlgebra.I]
-    P_star = Polymake.perlobj("polytope::Polytope<Rational>", EQUATIONS=cA, INEQUALITIES=nonnegative)
+    P_star = Polymake.@pm Polytope.Polytope{Rational}(EQUATIONS=cA, INEQUALITIES=nonnegative)
     H = HomogeneousPolyhedron(P_star)
     return Polyhedron(H)
 end
