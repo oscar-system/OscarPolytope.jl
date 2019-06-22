@@ -8,6 +8,31 @@ Q2 = convex_hull(pts, [1;1], [1;1]);
 C0 = cube(2)
 C1 = cube(2,1,0)
 
+@testset "OscarPolytope" begin
+
+@testset "(de)homogenize/augment" begin
+   dehomogenize, homogenize = OscarPolytope.dehomogenize, OscarPolytope.homogenize
+   pm = OscarPolytope.Polymake
+   m = [1 2 3; 4 5 6]
+   @test dehomogenize(homogenize(m, 0//1)) == m
+   @test dehomogenize(homogenize(m)) == m
+   @test dehomogenize(homogenize(pm.pm_Matrix(m))) == m
+   @test dehomogenize(homogenize(pm.pm_Matrix{pm.pm_Integer}(m))) isa pm.pm_Matrix{pm.pm_Integer}
+   @test dehomogenize(homogenize(pm.pm_Matrix{pm.pm_Rational}(m))) isa pm.pm_Matrix{pm.pm_Rational}
+
+   v = [1,2,3]
+   @test dehomogenize(homogenize(v, 1//1)) == v
+   @test dehomogenize(homogenize(v)) == v
+   @test dehomogenize(homogenize(pm.pm_Vector{pm.pm_Integer}(v))) == v
+   @test dehomogenize(homogenize(pm.pm_Vector{pm.pm_Integer}(v))) isa pm.pm_Vector{pm.pm_Integer}
+   @test dehomogenize(homogenize(pm.pm_Vector{pm.pm_Rational}(v))) isa pm.pm_Vector{pm.pm_Rational}
+
+   augment = OscarPolytope.augment
+
+   @test augment(m, [9,10]) == [9 1 2 3; 10 4 5 6]
+   @test augment(pm.pm_Matrix(m), [9,10]) == [9 1 2 3; 10 4 5 6]
+end
+
 @testset "conformance tests" begin
    @test typeof(Q0) == Polyhedron
    @test typeof(Q1) == Polyhedron
@@ -61,3 +86,5 @@ end
    @test maximal_value(primal) == minimal_value(dual)
    @test minimal_vertex(dual) == [0,0,1,1]
 end
+
+end # of @testset "OscarPolytope"
