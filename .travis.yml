@@ -1,0 +1,24 @@
+language: julia
+dist: xenial
+os:
+  - linux
+julia:
+  - nightly
+  - 1.1
+  - 1.0.3
+matrix:
+ allow_failures:
+ - julia: nightly
+notifications:
+  email: false
+sudo: required
+before_install:
+  - sudo ln -sf /usr/bin/gcc-7 /usr/bin/gcc
+  - sudo ln -sf /usr/bin/g++-7 /usr/bin/g++
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-7
+    - g++-7
