@@ -76,8 +76,8 @@ end
    A = [-1 0; 0 -1; 1 0; 0 1]
    b = [0; 0; 1; 1]
    objective = [1;1]
-   primal = PrimalProgram(objective,A,b)
-   dual = DualProgram(objective,A,b)
+   primal = primal_Program(objective,A,b)
+   dual = dual_program(objective,A,b)
    @test typeof(primal) == LinearProgram
    @test minimal_value(primal) == 0
    @test maximal_value(primal) == 2

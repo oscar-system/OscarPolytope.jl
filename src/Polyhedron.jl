@@ -108,7 +108,7 @@ facets(P::Polyhedron) = decompose_hdata(facets(P.homogeneous_polyhedron))
 ###############################################################################
 ###############################################################################
 @doc Markdown.doc"""
-    DualPolyhedron(A, c)
+    dual_polyhedron(A, c)
 
 The (metric) polyhedron defined by
 
@@ -116,14 +116,9 @@ $$P^*(A,c) = \{ y | yA = c, y ≥ 0 \}.$$
 
 see Theorem 4.11.
 """
-function DualPolyhedron(A, c)
-    #here BigInt, Integer, (fmpz, fmpq) -> Rational
-    #     nf_elem quad real field: -> QuadraticExtension
-    #     float -> Float
-    #     mpfr, BigFloat -> AccurateFloat
-    #
+function dual_polyhedron(A, c)
     m, n = size(A)
-    cA = matrix_for_polymake([c -LinearAlgebra.transpose(A)])
+    cA = [c -LinearAlgebra.transpose(A)]
     nonnegative = [zeros(BigInt, m, 1)  LinearAlgebra.I]
     P_star = polytope.Polytope{Rational}(EQUATIONS=cA, INEQUALITIES=nonnegative)
     H = HomogeneousPolyhedron(P_star)

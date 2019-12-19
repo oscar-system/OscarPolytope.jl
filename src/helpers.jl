@@ -44,6 +44,4 @@ function decompose_vdata(A::AbstractMatrix)
    return (A[2:end, vertexIndices], A[2:end, rayIndices])
 end
 
-function decompose_hdata(A)
-   (-A[:,2:end], A[:,1])
-end
+decompose_hdata(A) = (-A[:,2:end], A[:,1])
