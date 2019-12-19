@@ -28,7 +28,7 @@ end
 ###############################################################################
 ###############################################################################
 function Base.show(io::IO, P::Polyhedron)
-   if property_is_computed(P, :VERTICES)
+   if iscomputed(P, :VERTICES)
       println(io, "Polyhedron given as the convex hull of the columns of V, where\nV = ")
       Base.print_array(io, vertices(P))
       R = rays(P)
@@ -42,7 +42,7 @@ function Base.show(io::IO, P::Polyhedron)
          Base.print_array(io, L)
       end
       return
-   elseif property_is_computed(P, :INEQUALITIES)
+   elseif iscomputed(P, :INEQUALITIES)
       ineq = P.homogeneous_polyhedron.polymakePolytope.INEQUALITIES
       println(io, "Polyhedron given by { x | A x ≤ b } where ")
       println(io, "\nA = ")

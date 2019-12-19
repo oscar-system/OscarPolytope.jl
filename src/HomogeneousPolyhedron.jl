@@ -4,7 +4,7 @@
 ###############################################################################
 ###############################################################################
 function Base.show(io::IO, H::HomogeneousPolyhedron)
-   if property_is_computed(H, :INEQUALITIES)
+   if iscomputed(H, :INEQUALITIES)
       print(io, "Homogeneous polyhedron given by { x | A x ≥ 0 } where \n")
       print(io, "\nA = \n")
       Base.print_array(io, H.polymakePolytope.INEQUALITIES)

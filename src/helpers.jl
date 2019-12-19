@@ -27,16 +27,8 @@ homogenize(mat::AbstractMatrix, val::Number=1) = augment(mat, fill(val, size(mat
 dehomogenize(vec::AbstractVector) = vec[2:end]
 dehomogenize(mat::AbstractMatrix) = mat[:, 2:end]
 
-function property_is_computed(P::Polymake.pm_perl_ObjectAllocated, S::Symbol)
-   pv = Polymake.internal_call_method("lookup", P, Any[string(S)])
-   return nothing != Polymake.convert_from_property_value(pv)
-end
-function property_is_computed(HP::HomogeneousPolyhedron, S::Symbol)
-   return property_is_computed(HP.polymakePolytope, S)
-end
-function property_is_computed(P::Polyhedron, S::Symbol)
-   return property_is_computed(P.homogeneous_polyhedron, S)
-end
+iscomputed(HP::HomogeneousPolyhedron, property::Symbol) = Polymake.exists(P, string(property))
+iscomputed(P::Polyhedron, property::Symbol) = iscomputed(P.homogeneous_polyhedron, property)
 
 function decompose_vdata(A::AbstractMatrix)
    ncols = size(A, 2)
