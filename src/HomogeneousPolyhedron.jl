@@ -1,11 +1,3 @@
-function HomogeneousPolyhedron(polymakePolytope::Polymake.pm_perl_ObjectAllocated)
-    HomogeneousPolyhedron(polymakePolytope, :unknown)
-end
-function HomogeneousPolyhedron(bA)
-  p = Polymake.@pm Polytope.Polytope{Rational}(:INEQUALITIES=>matrix_for_polymake(bA))
-  return HomogeneousPolyhedron(p)
-end
-
 ###############################################################################
 ###############################################################################
 ### Display
