@@ -11,15 +11,15 @@ and generators of the lineality space (L) can be given as well.
 see Def. 2.11 and Def. 3.1.
 """
 function convex_hull(V::AbstractVecOrMat)
-   p = Polymake.@pm Polytope.Polytope{Rational}(:POINTS=>homogenize(transpose(V), 1))
+   p = polytope.Polytope{Rational}(:POINTS=>homogenize(transpose(V), 1))
    return Polyhedron(HomogeneousPolyhedron(p))
 end
 function convex_hull(V::AbstractVecOrMat, R::AbstractVecOrMat)
-   p = Polymake.@pm Polytope.Polytope{Rational}(:POINTS=>vcat(homogenize(transpose(V), 1), homogenize(transpose(R), 0)))
+   p = polytope.Polytope{Rational}(:POINTS=>vcat(homogenize(transpose(V), 1), homogenize(transpose(R), 0)))
    return Polyhedron(HomogeneousPolyhedron(p))
 end
 function convex_hull(V::AbstractVecOrMat, R::AbstractVecOrMat, L::AbstractVecOrMat)
-   p = Polymake.@pm Polytope.Polytope{Rational}(:POINTS=>vcat(homogenize(transpose(V), 1), homogenize(transpose(R), 0)), :INPUT_LINEALITY=>homogenize(transpose(L),0))
+   p = polytope.Polytope{Rational}(:POINTS=>vcat(homogenize(transpose(V), 1), homogenize(transpose(R), 0)), :INPUT_LINEALITY=>homogenize(transpose(L),0))
    return Polyhedron(HomogeneousPolyhedron(p))
 end
 ###############################################################################
@@ -64,14 +64,14 @@ end
 
 Returns the dimension of a polyhedron.
 """
-Polytope.dim(P::Polyhedron) = dim(P.homogeneous_polyhedron)
+polytope.dim(P::Polyhedron) = dim(P.homogeneous_polyhedron)
 
 """
    ambient_dim(P::Polyhedron)
 
 Returns the ambient dimension of a polyhedron.
 """
-Polytope.ambient_dim(P::Polyhedron) = ambient_dim(P.homogeneous_polyhedron)
+polytope.ambient_dim(P::Polyhedron) = ambient_dim(P.homogeneous_polyhedron)
 
 """
    vertices(P::Polyhedron)
@@ -125,7 +125,7 @@ function DualPolyhedron(A, c)
     m, n = size(A)
     cA = matrix_for_polymake([c -LinearAlgebra.transpose(A)])
     nonnegative = [zeros(BigInt, m, 1)  LinearAlgebra.I]
-    P_star = Polymake.@pm Polytope.Polytope{Rational}(EQUATIONS=cA, INEQUALITIES=nonnegative)
+    P_star = polytope.Polytope{Rational}(EQUATIONS=cA, INEQUALITIES=nonnegative)
     H = HomogeneousPolyhedron(P_star)
     return Polyhedron(H)
 end

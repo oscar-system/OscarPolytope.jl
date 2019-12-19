@@ -15,8 +15,8 @@ function Base.show(io::IO, H::HomogeneousPolyhedron)
 end
 
 function ==(H0::HomogeneousPolyhedron, H1::HomogeneousPolyhedron)
-   return Polytope.included_polyhedra(H0.polymakePolytope, H1.polymakePolytope) &&
-      Polytope.included_polyhedra(H1.polymakePolytope, H0.polymakePolytope)
+   return polytope.included_polyhedra(H0.polymakePolytope, H1.polymakePolytope) &&
+      polytope.included_polyhedra(H1.polymakePolytope, H0.polymakePolytope)
 end
 
 ###############################################################################
@@ -29,14 +29,14 @@ end
 
 Returns the dimension of a polyhedron.
 """
-Polytope.dim(H::HomogeneousPolyhedron) = Polytope.dim(H.polymakePolytope)
+polytope.dim(H::HomogeneousPolyhedron) = polytope.dim(H.polymakePolytope)
 
 """
    ambient_dim(H::HomogeneousPolyhedron)
 
 Returns the ambient dimension of a polyhedron.
 """
-Polytope.ambient_dim(H::HomogeneousPolyhedron) = Polytope.ambient_dim(H.polymakePolytope)
+polytope.ambient_dim(H::HomogeneousPolyhedron) = polytope.ambient_dim(H.polymakePolytope)
 
 """
    vertices(H::HomogeneousPolyhedron)

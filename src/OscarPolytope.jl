@@ -3,9 +3,8 @@ module OscarPolytope
 import LinearAlgebra, Markdown, Nemo, Polymake
 import Base: ==
 
-import Polymake.Polytope: dim, ambient_dim
+const polytope = Polymake.polytope
 
-const Polytope = Polymake.Polytope
 
 export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, LinearProgram, minimal_vertex, minimal_value, maximal_vertex, maximal_value, convex_hull, property_is_computed, lineality_space, cube, facets, dim, ambient_dim, PrimalProgram, DualProgram
 
@@ -14,9 +13,6 @@ include("HomogeneousPolyhedron.jl")
 include("Polyhedron.jl")
 include("helpers.jl")
 include("LinearProgram.jl")
-
-# export polyhedron, dual_polyhedron, homogeneous_polyhedron,
-       # boundary_points_matrix, inner_points_matrix
 
 #here BigInt, Integer, (fmpz, fmpq) -> Rational
 #     nf_elem quad real field: -> QuadraticExtension

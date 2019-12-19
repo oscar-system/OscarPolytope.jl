@@ -47,7 +47,7 @@ struct LinearProgram
    function LinearProgram(P::Polyhedron, objective::AbstractVector)
       ambDim = ambient_dim(P)
       size(objective, 1) == ambDim || error("objective has wrong dimension.")
-      lp = Polymake.@pm Polytope.LinearProgram(:LINEAR_OBJECTIVE=>homogenize(objective, 0))
+      lp = polytope.LinearProgram(:LINEAR_OBJECTIVE=>homogenize(objective, 0))
       P.homogeneous_polyhedron.polymakePolytope.LP = lp
       new(P, lp)
    end
