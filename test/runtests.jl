@@ -3,10 +3,10 @@ using OscarPolytope
 
 pts = [1 0 0; 0 0 1]
 Q0 = convex_hull(pts)
-Q1 = convex_hull(pts, [1;1]);
-Q2 = convex_hull(pts, [1;1], [1;1]);
-C0 = cube(2)
-C1 = cube(2,1,0)
+Q1 = convex_hull(pts, [1;1])
+Q2 = convex_hull(pts, [1;1], [1;1])
+C0 = OscarPolytope.cube(2)
+C1 = OscarPolytope.cube(2,1,0)
 
 @testset "OscarPolytope" begin
 

@@ -6,7 +6,7 @@ The existing constructors are:
  * `HomogeneousPolyhedron(P::pm_perl_Object)`: constructing a polyhedron from
  a `Polymake` polytope
  * `HomogeneousPolyhedron(bA::AbstractMatrix)`: constructing a polyhedron from
- matrix of homogeneous inequalities, i.e. `[b -A]`, where matrix `A` describes the inequalities and vector `b` contains their intercepts.
+ matrix of homogeneous inequalities, i.e. `[b A]`, where matrix `A` describes the inequalities and vector `b` contains their intercepts.
  * `HomogeneousPolyhedron(A::AbstractMatrix, b::AbstractVector)`: constructing a polyhedron from matrix of homogeneous inequalities, i.e. `[b -A]`, where matrix `A` describes the inequalities and vector `b` contains their intercepts.
 """
 struct HomogeneousPolyhedron #

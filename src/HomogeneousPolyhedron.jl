@@ -41,23 +41,23 @@ polytope.ambient_dim(H::HomogeneousPolyhedron) = polytope.ambient_dim(H.polymake
 """
    vertices(H::HomogeneousPolyhedron)
 
-Returns the vertices of a polyhedron.
+Returns the vertices of a polyhedron in column-major format.
 """
 vertices(H::HomogeneousPolyhedron) = transpose(H.polymakePolytope.VERTICES)
 
 """
    lineality_space(H::HomogeneousPolyhedron)
 
-Returns a basis of the lineality space of a polyhedron.
+Returns a basis of the lineality space of a polyhedron in column-major format.
 """
 lineality_space(H::HomogeneousPolyhedron) = transpose(H.polymakePolytope.LINEALITY_SPACE)
 
 """
    facets(H::HomogeneousPolyhedron)
 
-Returns the facets of a polyhedron.
+Returns the facets of a polyhedron in column-major format.
 """
-facets(H::HomogeneousPolyhedron) = H.polymakePolytope.FACETS
+facets(H::HomogeneousPolyhedron) = transpose(H.polymakePolytope.FACETS)
 
 ###############################################################################
 ###############################################################################
@@ -69,5 +69,5 @@ facets(H::HomogeneousPolyhedron) = H.polymakePolytope.FACETS
 
 Construct the $[-1,1]$-cube in dimension $d$. If $u$ and $l$ are given, the $[l,u]$-cube in dimension $d$ is returned.
 """
-homogeneous_cube(d) = HomogeneousPolyhedron(Polytope.cube(d))
-homogeneous_cube(d, u, l) = HomogeneousPolyhedron(Polytope.cube(d, u, l))
+homogeneous_cube(d) = HomogeneousPolyhedron(polytope.cube(d))
+homogeneous_cube(d, u, l) = HomogeneousPolyhedron(polytope.cube(d, u, l))

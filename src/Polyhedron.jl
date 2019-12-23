@@ -1,3 +1,6 @@
+Polyhedron(A, b) = Polyhedron(HomogeneousPolyhedron([b'; -A]))
+Polyhedron(pmp::Polymake.pm_perl_Object) = Polyhedron(HomogeneousPolyhedron(pmp))
+
 function ==(P0::Polyhedron, P1::Polyhedron)
    return P0.homogeneous_polyhedron == P1.homogeneous_polyhedron
 end
@@ -76,31 +79,39 @@ polytope.ambient_dim(P::Polyhedron) = ambient_dim(P.homogeneous_polyhedron)
 """
    vertices(P::Polyhedron)
 
-Returns the vertices of a polyhedron.
+Returns the vertices of a polyhedron in column-major format.
 """
-vertices(P::Polyhedron) = decompose_vdata(vertices(P.homogeneous_polyhedron))[1]
+function vertices(P::Polyhedron)
+   verts_in_rows = transpose(vertices(P.homogeneous_polyhedron))
+   return transpose(dehomogenize(verts_in_rows, vertex_indices(verts_in_rows)))
+end
 
 """
    rays(P::Polyhedron)
 
-Returns minimal set of generators of the cone of unbounded directions of a polyhedron.
+Returns minimal set of generators of the cone of unbounded directions of a polyhedron in column-major format.
 """
-rays(P::Polyhedron) = decompose_vdata(vertices(P.homogeneous_polyhedron))[2]
+function  rays(P::Polyhedron)
+   verts_in_rows = transpose(vertices(P.homogeneous_polyhedron))
+   return transpose(dehomogenize(verts_in_rows, ray_indices(verts_in_rows)))
+end
 
 """
    lineality_space(P::Polyhedron)
 
-Returns a basis of the lineality space of a polyhedron.
+Returns a basis of the lineality space of a polyhedron in column-major format.
 """
-lineality_space(P::Polyhedron) =
-   decompose_vdata(lineality_space(P.homogeneous_polyhedron))[2]
+function lineality_space(P::Polyhedron)
+   lineality_in_rows = transpose(lineality_space(P.homogeneous_polyhedron))
+   return transpose(dehomogenize(lineality_in_rows, ray_indices(lineality_in_rows)))
+end
 
 """
    facets(P::Polyhedron)
 
-Returns the facets of a polyhedron.
+Returns the facets of a polyhedron in column-major format.
 """
-facets(P::Polyhedron) = decompose_hdata(facets(P.homogeneous_polyhedron))
+facets(P::Polyhedron) = decompose_hdata(transpose(facets(P.homogeneous_polyhedron)))
 
 ###############################################################################
 ###############################################################################
@@ -119,7 +130,7 @@ see Theorem 4.11.
 function dual_polyhedron(A, c)
     m, n = size(A)
     cA = [c -LinearAlgebra.transpose(A)]
-    nonnegative = [zeros(BigInt, m, 1)  LinearAlgebra.I]
+    nonnegative = [zeros(eltype(A), m, 1)  LinearAlgebra.I]
     P_star = polytope.Polytope{Rational}(EQUATIONS=cA, INEQUALITIES=nonnegative)
     H = HomogeneousPolyhedron(P_star)
     return Polyhedron(H)
