@@ -5,8 +5,13 @@ import Base: ==
 
 const polytope = Polymake.polytope
 
+import Polymake.polytope: ambient_dim, dim
 
-export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, LinearProgram, minimal_vertex, minimal_value, maximal_vertex, maximal_value, convex_hull, property_is_computed, lineality_space, cube, facets, dim, ambient_dim, PrimalProgram, DualProgram
+export Polyhedron, HomogeneousPolyhedron, LinearProgram,
+    ambient_dim, dim, facets, lineality_space, rays, vertices, convex_hull,
+    primal_program, dual_program, dual_polyhedron,
+    minimal_vertex, minimal_value, maximal_vertex, maximal_value,
+    augment, homogenize, dehomogenize
 
 include("types.jl")
 include("HomogeneousPolyhedron.jl")
