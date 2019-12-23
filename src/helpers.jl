@@ -18,23 +18,16 @@ homogenize(vec::AbstractVector, val::Number=0) = augment(vec, val)
 homogenize(mat::AbstractMatrix, val::Number=1) = augment(mat, fill(val, size(mat,1)))
 
 dehomogenize(vec::AbstractVector) = vec[2:end]
-dehomogenize(mat::AbstractMatrix) = mat[:, 2:end]
+dehomogenize(mat::AbstractMatrix, rowidcs=1:size(mat,1)) = mat[rowidcs, 2:end]
 
-iscomputed(HP::HomogeneousPolyhedron, property::Symbol) = Polymake.exists(P, string(property))
+iscomputed(HP::HomogeneousPolyhedron, property::Symbol) = Polymake.exists(HP.polymakePolytope, string(property))
 iscomputed(P::Polyhedron, property::Symbol) = iscomputed(P.homogeneous_polyhedron, property)
 
-function decompose_vdata(A::AbstractMatrix)
-   ncols = size(A, 2)
-   vertexIndices = Int[]
-   rayIndices = Int[]
-   for i=1:ncols
-      if A[1, i] == 0
-         push!(rayIndices, i)
-      elseif A[1, i] == 1
-         push!(vertexIndices, i)
-      end
-   end
-   return (A[2:end, vertexIndices], A[2:end, rayIndices])
+#assuming polymake, row-major storage
+vertex_indices(A::AbstractMatrix) = filter(i->isone(A[i,1]), 1:size(A,1))
+ray_indices(A::AbstractMatrix) = filter(i->iszero(A[i,1]), 1:size(A,1))
+vertices(A::AbstractMatrix) = dehomogenize(A, vertex_indices(A))
+rays(A::AbstractMatrix) = dehomogenize(A, ray_indices(A))
+decompose_hdata(A) = (-dehomogenize(A), A[:,1])
 end
 
-decompose_hdata(A) = (-A[:,2:end], A[:,1])
