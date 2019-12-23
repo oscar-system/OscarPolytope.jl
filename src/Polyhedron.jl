@@ -126,8 +126,8 @@ see Theorem 4.11.
 """
 function dual_polyhedron(A, c)
     m, n = size(A)
-    cA = [c -LinearAlgebra.transpose(A)]
-    nonnegative = [zeros(eltype(A), m, 1)  LinearAlgebra.I]
+    cA = transpose([c'; -LinearAlgebra.transpose(A)])
+    nonnegative = [zeros(eltype(A), n, 1)  LinearAlgebra.I]
     P_star = polytope.Polytope{Rational}(EQUATIONS=cA, INEQUALITIES=nonnegative)
     H = HomogeneousPolyhedron(P_star)
     return Polyhedron(H)

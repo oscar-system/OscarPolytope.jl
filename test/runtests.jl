@@ -70,9 +70,9 @@ end
 end
 
 @testset "LinearProgram" begin
-   A = [-1 0; 0 -1; 1 0; 0 1]
-   b = [0; 0; 1; 1]
-   objective = [1;1]
+   A = [-1 0 1 0; 0 -1 0 1]
+   b = [0, 0, 1, 1]
+   objective = [1,1]
    primal = primal_program(objective,A,b)
    dual = dual_program(objective,A,b)
    @test typeof(primal) == LinearProgram
