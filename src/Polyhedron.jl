@@ -1,6 +1,3 @@
-Polyhedron(A, b) = Polyhedron(HomogeneousPolyhedron([b'; -A]))
-Polyhedron(pmp::Polymake.pm_perl_Object) = Polyhedron(HomogeneousPolyhedron(pmp))
-
 function ==(P0::Polyhedron, P1::Polyhedron)
    return P0.homogeneous_polyhedron == P1.homogeneous_polyhedron
 end
