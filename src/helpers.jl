@@ -1,10 +1,3 @@
-matrix_for_polymake(x::Nemo.fmpz_mat) = Matrix{BigInt}(x)
-matrix_for_polymake(x::Nemo.fmpq_mat) = Matrix{Rational{BigInt}}(x)
-matrix_for_polymake(x::AbstractMatrix{<:Integer}) = x
-matrix_for_polymake(x::AbstractMatrix{<:Rational{<:Integer}}) = x
-matrix_for_polymake(x::Polymake.pm_MatrixAllocated{Polymake.pm_Rational}) = x
-matrix_for_polymake(x::AbstractArray) = x
-
 function augment(vec::AbstractVector, val)
    s = size(vec)
    res = similar(vec, (s[1]+1,))
