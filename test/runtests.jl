@@ -84,4 +84,6 @@ end
    @test minimal_vertex(dual) == [0,0,1,1]
 end
 
+include("nemo_integration.jl")
+
 end # of @testset "OscarPolytope"

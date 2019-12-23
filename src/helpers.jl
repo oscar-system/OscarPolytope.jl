@@ -29,5 +29,23 @@ ray_indices(A::AbstractMatrix) = filter(i->iszero(A[i,1]), 1:size(A,1))
 vertices(A::AbstractMatrix) = dehomogenize(A, vertex_indices(A))
 rays(A::AbstractMatrix) = dehomogenize(A, ray_indices(A))
 decompose_hdata(A) = (-dehomogenize(A), A[:,1])
+
+function Base.convert(::Type{Polymake.pm_Integer},
+   x::Union{Nemo.fmpz, Nemo.fmpq})
+   return Polymake.pm_Integer(BigInt(x))
 end
 
+function Base.convert(::Type{Polymake.pm_Rational},
+   x::Union{Nemo.fmpz, Nemo.fmpq})
+   return Polymake.pm_Rational(convert(Rational{BigInt}, x))
+end
+
+function Base.convert(::Type{Polymake.PolymakeType},
+   x::Nemo.MatrixElem{<:Union{Nemo.RingElem, Integer}})
+   return Polymake.pm_Matrix{Polymake.pm_Integer}(Matrix(x))
+end
+
+function Base.convert(::Type{Polymake.PolymakeType},
+   x::Nemo.MatrixElem{<:Union{Nemo.FracElem{Nemo.fmpz}, Rational}})
+   return Polymake.pm_Matrix{pm_Rational}(x)
+end
