@@ -36,17 +36,14 @@ see Def. 3.35 and Section 4.1.
 """
 struct Polyhedron #a real polymake polyhedron
     homogeneous_polyhedron::HomogeneousPolyhedron
-    Polyhedron(A, b) = new(HomogeneousPolyhedron([b -A]))
-    Polyhedron(pmp::Polymake.pm_perl_Object) = new(HomogeneousPolyhedron(pmp))
 end
-
 
 struct LinearProgram
    feasible_region::Polyhedron
    polymake_lp::Polymake.pm_perl_ObjectAllocated
    function LinearProgram(P::Polyhedron, objective::AbstractVector)
       ambDim = ambient_dim(P)
-      size(objective, 1) == ambDim || error("objective has wrong dimension.")
+      size(objective, 1) == ambDim || Throw(ArgumentError("objective has wrong dimension."))
       lp = polytope.LinearProgram(:LINEAR_OBJECTIVE=>homogenize(objective, 0))
       P.homogeneous_polyhedron.polymakePolytope.LP = lp
       return new(P, lp)
