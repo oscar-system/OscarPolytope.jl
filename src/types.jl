@@ -37,8 +37,12 @@ struct Polyhedron #a real polymake polyhedron
     homogeneous_polyhedron::HomogeneousPolyhedron
 
     Polyhedron(hp::HomogeneousPolyhedron) = new(hp)
-    Polyhedron(A, b=[eltype(A)(1) for _ in 1:size(A,2)]) = new(HomogeneousPolyhedron(transpose([b'; -A])))
+
     Polyhedron(pmp::Polymake.pm_perl_Object) = new(HomogeneousPolyhedron(pmp))
+
+    Polyhedron(A, b) = new(HomogeneousPolyhedron(transpose([b'; -A])))
+
+    Polyhedron(bA) = new(HomogeneousPolyhedron(bA))
 end
 
 struct LinearProgram
