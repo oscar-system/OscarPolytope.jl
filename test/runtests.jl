@@ -3,15 +3,14 @@ using OscarPolytope
 
 pts = [1 0 0; 0 0 1]
 Q0 = convex_hull(pts)
-Q1 = convex_hull(pts, [1;1]);
-Q2 = convex_hull(pts, [1;1], [1;1]);
-C0 = cube(2)
-C1 = cube(2,1,0)
+Q1 = convex_hull(pts, [1;1])
+Q2 = convex_hull(pts, [1;1], [1;1])
+C0 = OscarPolytope.cube(2)
+C1 = OscarPolytope.cube(2,1,0)
 
 @testset "OscarPolytope" begin
 
 @testset "(de)homogenize/augment" begin
-   dehomogenize, homogenize = OscarPolytope.dehomogenize, OscarPolytope.homogenize
    pm = OscarPolytope.Polymake
    m = [1 2 3; 4 5 6]
    @test dehomogenize(homogenize(m, 0//1)) == m
@@ -26,8 +25,6 @@ C1 = cube(2,1,0)
    @test dehomogenize(homogenize(pm.pm_Vector{pm.pm_Integer}(v))) == v
    @test dehomogenize(homogenize(pm.pm_Vector{pm.pm_Integer}(v))) isa pm.pm_Vector{pm.pm_Integer}
    @test dehomogenize(homogenize(pm.pm_Vector{pm.pm_Rational}(v))) isa pm.pm_Vector{pm.pm_Rational}
-
-   augment = OscarPolytope.augment
 
    @test augment(m, [9,10]) == [9 1 2 3; 10 4 5 6]
    @test augment(pm.pm_Matrix(m), [9,10]) == [9 1 2 3; 10 4 5 6]
@@ -73,11 +70,11 @@ end
 end
 
 @testset "LinearProgram" begin
-   A = [-1 0; 0 -1; 1 0; 0 1]
-   b = [0; 0; 1; 1]
-   objective = [1;1]
-   primal = PrimalProgram(objective,A,b)
-   dual = DualProgram(objective,A,b)
+   A = [-1 0 1 0; 0 -1 0 1]
+   b = [0, 0, 1, 1]
+   objective = [1,1]
+   primal = primal_program(objective,A,b)
+   dual = dual_program(objective,A,b)
    @test typeof(primal) == LinearProgram
    @test minimal_value(primal) == 0
    @test maximal_value(primal) == 2
@@ -86,5 +83,7 @@ end
    @test maximal_value(primal) == minimal_value(dual)
    @test minimal_vertex(dual) == [0,0,1,1]
 end
+
+include("nemo_integration.jl")
 
 end # of @testset "OscarPolytope"
