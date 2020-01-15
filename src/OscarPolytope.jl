@@ -7,11 +7,26 @@ const polytope = Polymake.polytope
 
 import Polymake.polytope: ambient_dim, dim
 
-export Polyhedron, HomogeneousPolyhedron, LinearProgram,
-    ambient_dim, dim, facets, lineality_space, rays, vertices, convex_hull,
-    primal_program, dual_program, dual_polyhedron,
-    minimal_vertex, minimal_value, maximal_vertex, maximal_value,
-    augment, homogenize, dehomogenize
+export Polyhedron,
+       HomogeneousPolyhedron,
+       LinearProgram,
+       ambient_dim,
+       augment,
+       convex_hull,
+       dehomogenize,
+       dim,
+       dual_program,
+       dual_polyhedron,
+       facets,
+       homogenize,
+       lineality_space,
+       maximal_vertex,
+       maximal_value,
+       minimal_vertex,
+       minimal_value,
+       primal_program,
+       rays,
+       vertices
 
 include("types.jl")
 include("HomogeneousPolyhedron.jl")
@@ -19,89 +34,4 @@ include("Polyhedron.jl")
 include("helpers.jl")
 include("LinearProgram.jl")
 
-#here BigInt, Integer, (fmpz, fmpq) -> Rational
-#     nf_elem quad real field: -> QuadraticExtension
-#     float -> Float
-#     mpfr, BigFloat -> AccurateFloat
-
-
-
-
-#
-# #we don't have points yet, so I can only return the matrix.
-# # the polyhedron is not homogeneous, so I strip the 1st entry
-# #TODO: since P is given by Ax <= b, should the "points" be rows or columns?
-#
-# @doc Markdown.doc"""
-#     boundary_points_matrix(P::Polyhedron) -> fmpz_mat
-# > Given a bounded polyhedron, return the coordinates of all integer points
-# > its boundary as rows in a matrix.
-# """
-# function boundary_points_matrix(P::Polyhedron)
-#   p = _polytope(P)
-#   out = Polymake.give(p, "BOUNDARY_LATTICE_POINTS")
-#   res = zero_matrix(FlintZZ, rows(out), cols(out)-1)
-#   for i=1:rows(out)
-#     @assert out[i,1] == 1
-#     for j=1:cols(out)-1
-#       res[i,j] = out[i, j+1]
-#     end
-#   end
-#   return res
-# end
-#
-# @doc Markdown.doc"""
-#     inner_points_matrix(P::Polyhedron) -> fmpz_mat
-# > Given a bounded polyhedron, return the coordinates of all integer points
-# > in its interior as rows in a matrix.
-# """
-# function inner_points_matrix(P::Polyhedron)
-#   p = _polytope(P)
-#   out = Polymake.give(p, "INTERIOR_LATTICE_POINTS")
-#   res = zero_matrix(FlintZZ, rows(out), cols(out)-1)
-#   for i=1:rows(out)
-#     @assert out[i,1] == 1
-#     for j=1:cols(out)-1
-#       res[i,j] = out[i, j+1]
-#     end
-#   end
-#   return res
-# end
-
-#=
-function polyhedron(V::Array{Point, 1}, C::Array{Point, 1}=Array{Point, 1}(UndefInitializer(), 0), L::Array{Point, 1} = Array{Point, 1}(UndefInitializer(), 0))# only for Homogeneous version; Other::Dict{String, Any} = Dict{String, Any}())
-  d = Dict{String, Any}("INEQUALITIES" => bA)
-#  for (k,v) = Other
-#    d[k] = v
-#  end
-
-#  POINTS = [ 1 V; 0 C], INPUT_LINEALITIES = L
-  p = Polymake.perlobj("Polytope<Rational>", d)
-  P = Polyhedron(t)
-  P.P = p
-  return P
-end
-
-function polyhedron(V::MatElem, C::MatElem, L::MatElem)
-end
-
-function convex_hull(P::polyhedron, Q::Polyhedron)
-end
-function convex_hull(P::polyhedron, Q::Point)
-end
-+(P, Q)
-intersect(P, Q)
-product
-join
-free_sum
-
-lattice_points
-isbounded
-isunbounded
-lattice_points_generators
-volume
-isempty
-
-
-=#
 end # module

@@ -4,19 +4,24 @@
 ###############################################################################
 ###############################################################################
 function Base.show(io::IO, H::HomogeneousPolyhedron)
-   if iscomputed(H, :INEQUALITIES)
-      print(io, "Homogeneous polyhedron given by { x | A x ≥ 0 } where \n")
-      print(io, "\nA = \n")
-      Base.print_array(io, H.polymakePolytope.INEQUALITIES)
-   else
-      println(io, "Homogeneous polyhedron defined as convex hull of vertices and rays.")
-      println(io, "The hyperplane description has not been computed yet.")
-   end
+    if iscomputed(H, :INEQUALITIES)
+        print(io, "Homogeneous polyhedron given by { x | A x ≥ 0 } where \n")
+        print(io, "\nA = \n")
+        Base.print_array(io, H.polymakePolytope.INEQUALITIES)
+    else
+        println(
+            io,
+            "Homogeneous polyhedron defined as convex hull of vertices and rays.",
+        )
+        println(io, "The hyperplane description has not been computed yet.")
+    end
 end
 
 function ==(H0::HomogeneousPolyhedron, H1::HomogeneousPolyhedron)
-   return polytope.included_polyhedra(H0.polymakePolytope, H1.polymakePolytope) &&
-      polytope.included_polyhedra(H1.polymakePolytope, H0.polymakePolytope)
+    return polytope.included_polyhedra(
+        H0.polymakePolytope,
+        H1.polymakePolytope,
+    ) && polytope.included_polyhedra(H1.polymakePolytope, H0.polymakePolytope)
 end
 
 ###############################################################################
@@ -36,7 +41,8 @@ polytope.dim(H::HomogeneousPolyhedron) = polytope.dim(H.polymakePolytope)
 
 Returns the ambient dimension of a polyhedron.
 """
-polytope.ambient_dim(H::HomogeneousPolyhedron) = polytope.ambient_dim(H.polymakePolytope)
+polytope.ambient_dim(H::HomogeneousPolyhedron) =
+    polytope.ambient_dim(H.polymakePolytope)
 
 """
    vertices(H::HomogeneousPolyhedron)
@@ -50,7 +56,8 @@ vertices(H::HomogeneousPolyhedron) = transpose(H.polymakePolytope.VERTICES)
 
 Returns a basis of the lineality space of a polyhedron in column-major format.
 """
-lineality_space(H::HomogeneousPolyhedron) = transpose(H.polymakePolytope.LINEALITY_SPACE)
+lineality_space(H::HomogeneousPolyhedron) =
+    transpose(H.polymakePolytope.LINEALITY_SPACE)
 
 """
    facets(H::HomogeneousPolyhedron)
@@ -68,6 +75,5 @@ facets(H::HomogeneousPolyhedron) = transpose(H.polymakePolytope.FACETS)
    homogeneous_cube(d [, u, l])
 
 Construct the $[-1,1]$-cube in dimension $d$. If $u$ and $l$ are given, the $[l,u]$-cube in dimension $d$ is returned.
-"""
-homogeneous_cube(d) = HomogeneousPolyhedron(polytope.cube(d))
+""" homogeneous_cube(d) = HomogeneousPolyhedron(polytope.cube(d))
 homogeneous_cube(d, u, l) = HomogeneousPolyhedron(polytope.cube(d, u, l))
