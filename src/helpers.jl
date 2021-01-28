@@ -1,8 +1,8 @@
-matrix_for_polymake(x::Nemo.fmpz_mat) = Matrix{BigInt}(x)
-matrix_for_polymake(x::Nemo.fmpq_mat) = Matrix{Rational{BigInt}}(x)
+# matrix_for_polymake(x::Nemo.fmpz_mat) = Matrix{BigInt}(x)
+# matrix_for_polymake(x::Nemo.fmpq_mat) = Matrix{Rational{BigInt}}(x)
 matrix_for_polymake(x::AbstractMatrix{<:Integer}) = x
 matrix_for_polymake(x::AbstractMatrix{<:Rational{<:Integer}}) = x
-matrix_for_polymake(x::Polymake.pm_MatrixAllocated{Polymake.pm_Rational}) = x
+matrix_for_polymake(x::Polymake.Matrix) = x
 matrix_for_polymake(x::AbstractArray) = x
 
 function augment(vec::AbstractVector, val)
@@ -26,32 +26,23 @@ homogenize(mat::AbstractMatrix, val::Number=1) = augment(mat, fill(val, size(mat
 
 dehomogenize(vec::AbstractVector) = vec[2:end]
 dehomogenize(mat::AbstractMatrix) = mat[:, 2:end]
-
-function property_is_computed(P::Polymake.pm_perl_ObjectAllocated, S::Symbol)
+#
+function property_is_computed(P::Polymake.BigObjectAllocated, S::Symbol)
    pv = Polymake.internal_call_method("lookup", P, Any[string(S)])
    return nothing != Polymake.convert_from_property_value(pv)
 end
-function property_is_computed(HP::HomogeneousPolyhedron, S::Symbol)
-   return property_is_computed(HP.polymakePolytope, S)
-end
-function property_is_computed(P::Polyhedron, S::Symbol)
-   return property_is_computed(P.homogeneous_polyhedron, S)
-end
 
+"""
+   decompose_vdata(A::AbstractMatrix)
+
+Given a (homoegenuous) polymake matrix split into vertices and rays and dehomogenize.
+"""
 function decompose_vdata(A::AbstractMatrix)
-   ncols = size(A, 2)
-   vertexIndices = Int[]
-   rayIndices = Int[]
-   for i=1:ncols
-      if A[1, i] == 0
-         push!(rayIndices, i)
-      elseif A[1, i] == 1
-         push!(vertexIndices, i)
-      end
-   end
-   return (A[2:end, vertexIndices], A[2:end, rayIndices])
+   vertex_indices = findall(!iszero, view(A, :, 1))
+   ray_indices = findall(iszero, view(A, :, 1))
+   return (vertices = A[vertex_indices, 2:end], rays = A[ray_indices, 2:end])
 end
 
 function decompose_hdata(A)
-   (-A[:,2:end], A[:,1])
+   (A = -A[:,2:end], b = A[:,1])
 end

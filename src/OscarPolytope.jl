@@ -1,22 +1,35 @@
 module OscarPolytope
 
-import LinearAlgebra, Markdown, Nemo, Polymake
+import LinearAlgebra, Markdown, Polymake
 import Base: ==
+# import Polymake.polytope: dim, ambient_dim
+const Polytope = Polymake.polytope
 
-import Polymake.Polytope: dim, ambient_dim
+export Polyhedron
+export Polyhedron,
+    dim,
+    ambient_dim,
+    vertices,
+    facets,
+    rays,
+    lineality_space,
+    cube,
+    convex_hull,
+    pm_polytope
 
-const Polytope = Polymake.Polytope
-
-export Polyhedron, DualPolyhedron, HomogeneousPolyhedron, vertices, rays, LinearProgram, minimal_vertex, minimal_value, maximal_vertex, maximal_value, convex_hull, property_is_computed, lineality_space, cube, facets, dim, ambient_dim, PrimalProgram, DualProgram
-
-include("types.jl")
-include("HomogeneousPolyhedron.jl")
-include("Polyhedron.jl")
 include("helpers.jl")
-include("LinearProgram.jl")
+include("Polyhedron.jl")
+
+end # module
+
+###############
+## OLD STUFF ##
+###############
+
+# include("LinearProgram.jl")
 
 # export polyhedron, dual_polyhedron, homogeneous_polyhedron,
-       # boundary_points_matrix, inner_points_matrix
+# boundary_points_matrix, inner_points_matrix
 
 #here BigInt, Integer, (fmpz, fmpq) -> Rational
 #     nf_elem quad real field: -> QuadraticExtension
@@ -103,4 +116,3 @@ isempty
 
 
 =#
-end # module
