@@ -1,5 +1,6 @@
 using Test
 using OscarPolytope
+import Oscar
 const pm = OscarPolytope.Polymake
 
 
@@ -62,5 +63,13 @@ const pm = OscarPolytope.Polymake
     @testset "standard constructions" begin
         @test size(vertices(C0)) == (4, 2)
         @test_broken C0 == convex_hull(vertices(C0))
+    end
+
+    @testset "newton_polytope" begin
+         Qx, x = Oscar.PolynomialRing(Oscar.QQ, :x=>1:2)
+         f = sum([x; 1])^2 + x[1]^4*x[2]*3
+         newt = newton_polytope(f)
+         @test dim(newt) == 2
+         @test vertices(newt) == [4 1; 2 0; 0 2; 0 0]
     end
 end # of @testset "OscarPolytope"

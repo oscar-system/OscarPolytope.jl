@@ -151,3 +151,12 @@ function convex_hull(V::AbstractVecOrMat, R::AbstractVecOrMat, L::AbstractVecOrM
     return Polyhedron(pm_polytope)
 end
 
+"""
+    newton_polytope(poly)
+
+Compute the Newton polytope of the given polynomial `poly`.
+"""
+function newton_polytope(f)
+    exponents = reduce(hcat, Oscar.exponent_vectors(f))'
+    convex_hull(exponents)
+end
