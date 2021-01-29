@@ -1,21 +1,25 @@
 module OscarPolytope
 
-import LinearAlgebra, Markdown, Polymake
+import LinearAlgebra, Markdown
 import Base: ==
-# import Polymake.polytope: dim, ambient_dim
-const Polytope = Polymake.polytope
+import Oscar
+using Oscar: Polymake
 
-export Polyhedron
+using Oscar.Polymake: visual
+export Polymake
+
 export Polyhedron,
-    dim,
     ambient_dim,
-    vertices,
-    facets,
-    rays,
-    lineality_space,
-    cube,
     convex_hull,
-    pm_polytope
+    cube,
+    dim,
+    facets,
+    lineality_space,
+    newton_polytope,
+    pm_polytope,
+    rays,
+    vertices,
+    visual
 
 include("helpers.jl")
 include("Polyhedron.jl")
