@@ -20,10 +20,8 @@ const pm = OscarPolytope.Polymake
         @test dehomogenize(homogenize(m, 0 // 1)) == m
         @test dehomogenize(homogenize(m)) == m
         @test dehomogenize(homogenize(pm.Matrix(m))) == m
-        @test dehomogenize(homogenize(pm.Matrix{pm.Integer}(m))) isa
-              pm.Matrix{pm.Integer}
-        @test dehomogenize(homogenize(pm.Matrix{pm.Rational}(m))) isa
-              pm.Matrix{pm.Rational}
+        @test dehomogenize(homogenize(pm.Matrix{pm.Integer}(m))) isa pm.Matrix{pm.Integer}
+        @test dehomogenize(homogenize(pm.Matrix{pm.Rational}(m))) isa pm.Matrix{pm.Rational}
     end
 
     @testset "conformance tests" begin
@@ -66,10 +64,32 @@ const pm = OscarPolytope.Polymake
     end
 
     @testset "newton_polytope" begin
-         Qx, x = Oscar.PolynomialRing(Oscar.QQ, :x=>1:2)
-         f = sum([x; 1])^2 + x[1]^4*x[2]*3
-         newt = newton_polytope(f)
-         @test dim(newt) == 2
-         @test vertices(newt) == [4 1; 2 0; 0 2; 0 0]
+        Qx, x = Oscar.PolynomialRing(Oscar.QQ, :x => 1:2)
+        f = sum([x; 1])^2 + x[1]^4 * x[2] * 3
+        newt = newton_polytope(f)
+        @test dim(newt) == 2
+        @test vertices(newt) == [4 1; 2 0; 0 2; 0 0]
+    end
+
+    @testset "Construct from fmpq" begin
+        A = zeros(Oscar.QQ, 3, 2)
+        A[1, 1] = 1
+        A[3, 2] = 4
+        @test vertices(convex_hull(A)) == [1 0; 0 0; 0 4]
+
+        lhs, rhs = facets(Polyhedron(A, [1, 2, -3]))
+        @test lhs == [1 0; 0 4; 0 0]
+        @test rhs == [1, -3, 1]
+    end
+
+    @testset "Construct from fmpz" begin
+        A = zeros(Oscar.ZZ, 3, 2)
+        A[1, 1] = 1
+        A[3, 2] = 4
+        @test vertices(convex_hull(A)) == [1 0; 0 0; 0 4]
+
+        lhs, rhs = facets(Polyhedron(A, [1, 2, -3]))
+        @test lhs == [1 0; 0 4; 0 0]
+        @test rhs == [1, -3, 1]
     end
 end # of @testset "OscarPolytope"
