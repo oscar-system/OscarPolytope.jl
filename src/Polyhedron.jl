@@ -85,6 +85,13 @@ Returns the ambient dimension of a polyhedron.
 ambient_dim(H::Polyhedron) = Polymake.polytope.ambient_dim(pm_polytope(H))
 
 """
+   codim(H::Polyhedron)
+
+Returns the codimension of a polyhedron.
+"""
+codim(H::Polyhedron) = ambient_dim(H)-dim(H)
+
+"""
    vertices(H::Polyhedron)
 
 Returns the vertices of a polyhedron.

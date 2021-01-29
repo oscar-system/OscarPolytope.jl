@@ -8,8 +8,10 @@ using Oscar: Polymake
 using Oscar.Polymake: visual
 export Polymake
 
-export Polyhedron,
+export Cone,
+    Polyhedron,
     ambient_dim,
+    codim,
     convex_hull,
     cube,
     dim,
@@ -17,12 +19,14 @@ export Polyhedron,
     lineality_space,
     newton_polytope,
     pm_polytope,
+    positive_hull,
     rays,
     vertices,
     visual
 
 include("helpers.jl")
 include("Polyhedron.jl")
+include("Cones.jl")
 
 end # module
 
