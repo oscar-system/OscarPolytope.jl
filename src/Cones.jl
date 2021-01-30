@@ -29,7 +29,7 @@ Get the underlying polymake `Cone`.
 pm_cone(C::Cone) = C.pm_cone
 
 function Base.show(io::IO, C::Cone)
-    display(C.pm_cone)
+    print(io,"A polyhedral cone")
 end
 """
    dim(C::Cone)

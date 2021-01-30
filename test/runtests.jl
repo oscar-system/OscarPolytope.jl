@@ -7,6 +7,7 @@ const pm = OscarPolytope.Polymake
 @testset "OscarPolytope" begin
 
     pts = [1 0 0; 0 0 1]'
+    Cone1=Cone(pts)
     Q0 = convex_hull(pts)
     Q1 = convex_hull(pts, [1 1])
     Q2 = convex_hull(pts, [1 1], [1 1])
@@ -25,6 +26,7 @@ const pm = OscarPolytope.Polymake
     end
 
     @testset "conformance tests" begin
+        @test typeof(Cone1) == Cone
         @test typeof(Q0) == Polyhedron
         @test typeof(Q1) == Polyhedron
         @test typeof(Q2) == Polyhedron
