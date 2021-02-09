@@ -24,7 +24,47 @@ homogenize(mat::AbstractMatrix, val::Number = 1) = augment(mat, fill(val, size(m
 
 dehomogenize(vec::AbstractVector) = vec[2:end]
 dehomogenize(mat::AbstractMatrix) = mat[:, 2:end]
-#
+
+"""
+    stack(A::AbstractVecOrMat, B::AbstractVecOrMat)
+
+Stacks `A` and `B` vertically. The difference to `vcat`is that `AbstractVector`s are always
+interpreted as row vectors. Empty vectors are ignored.
+
+## Examples
+
+```
+julia> stack([1, 2], [0, 0])
+2×2 Array{Int64,2}:
+ 1  2
+ 0  0
+
+julia> stack([1 2], [0 0])
+2×2 Array{Int64,2}:
+ 1  2
+ 0  0
+
+julia> stack([1 2], [0, 0])
+2×2 Array{Int64,2}:
+ 1  2
+ 0  0
+
+julia> stack([1, 2], [0 0])
+2×2 Array{Int64,2}:
+ 1  2
+ 0  0
+
+julia> stack([1 2], [])
+1×2 Array{Int64,2}:
+ 1  2
+```
+"""
+stack(A::AbstractMatrix, B::AbstractMatrix) = [A; B]
+stack(A::AbstractMatrix, B::AbstractVector) = isempty(B) ? A :  [A; B']
+stack(A::AbstractVector, B::AbstractMatrix) = isempty(A) ? B : [A'; B]
+stack(A::AbstractVector, B::AbstractVector) = isempty(A) ? B : [A'; B']
+
+
 function property_is_computed(P::Polymake.BigObjectAllocated, S::Symbol)
     pv = Polymake.internal_call_method("lookup", P, Any[string(S)])
     return nothing != Polymake.convert_from_property_value(pv)
@@ -33,7 +73,7 @@ end
 """
    decompose_vdata(A::AbstractMatrix)
 
-Given a (homoegenuous) polymake matrix split into vertices and rays and dehomogenize.
+Given a (homogeneous) polymake matrix split into vertices and rays and dehomogenize.
 """
 function decompose_vdata(A::AbstractMatrix)
     vertex_indices = findall(!iszero, view(A, :, 1))
