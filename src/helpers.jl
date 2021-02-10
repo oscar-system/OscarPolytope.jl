@@ -63,7 +63,18 @@ stack(A::AbstractMatrix, B::AbstractMatrix) = [A; B]
 stack(A::AbstractMatrix, B::AbstractVector) = isempty(B) ? A :  [A; B']
 stack(A::AbstractVector, B::AbstractMatrix) = isempty(A) ? B : [A'; B]
 stack(A::AbstractVector, B::AbstractVector) = isempty(A) ? B : [A'; B']
-
+#=
+function stack(A::Array{Polymake.VectorAllocated{Polymake.Rational},1})
+    if length(A)==2
+        return(stack(A[1],A[2]))
+    end
+    M=stack(A[1],A[2])
+    for i in 3:length(A)
+        M=stack(M,A[i])
+    end
+    return(M)
+end
+=#
 
 function property_is_computed(P::Polymake.BigObjectAllocated, S::Symbol)
     pv = Polymake.internal_call_method("lookup", P, Any[string(S)])

@@ -16,18 +16,29 @@ export Cone,
     cube,
     dim,
     facets,
+    feasible_region,
     lineality_space,
+    LinearProgram,
+    maximal_value,
+    maximal_vertex,
+    minimal_value,
+    minimal_vertex,
     newton_polytope,
+    normalized_volume,
+    objective_function,
     recession_cone,
+    solve_lp,
     pm_polytope,
     positive_hull,
     rays,
     vertices,
-    visual
+    visual,
+    volume
 
 include("helpers.jl")
 include("Polyhedron.jl")
-include("Cones.jl")
+include("Cone.jl")
+include("LinearProgram.jl")
 
 end # module
 

@@ -3,7 +3,8 @@
 
      A polyhedral cone, not necessarily pointed, defined by the positive hull
      of the rays, Rays.
-""" struct Cone #a real polymake polyhedron
+"""
+struct Cone #a real polymake polyhedron
     pm_cone::Polymake.BigObjectAllocated
 end
 function Cone(Rays::Union{Oscar.MatElem,AbstractMatrix})
@@ -57,7 +58,15 @@ of the `generators`. Redundant rays are allowed in the generators.
 """
 function positive_hull(generators::Union{Oscar.MatElem,AbstractMatrix})
     # TODO: Filter out zero rows
-    Cone(generators)
+    C=Polymake.polytope.Cone{Rational}(RAYS = matrix_for_polymake(generators))
+    RayIndices=[pm_set_to_julia(S)[1]+1
+                for S in Polymake.polytope.faces_of_dim(C,1)]
+    Cone(generators[RayIndices,:])
+end
+
+#Is there a Polymake.jl function for this?
+function pm_set_to_julia(S::Polymake.SetAllocated{Int64})
+    return(Array{Int64,1}(S))
 end
 
 

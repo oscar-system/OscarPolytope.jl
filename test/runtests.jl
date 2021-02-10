@@ -13,6 +13,20 @@ const pm = OscarPolytope.Polymake
     Q2 = convex_hull(pts, [1 1], [1 1])
     C0 = cube(2)
     C1 = cube(2, 1, 0)
+    #positive orthant
+    Pos=Polyhedron([-1 0 0; 0 -1 0; 0 0 -1],[0,0,0])
+
+
+    @testset "linear programs" begin
+        LP1 = LinearProgram(C0,[1,3])
+        LP2 = LinearProgram(C0,[2,2],3; convention = :min)
+        LP3 = LinearProgram(Pos,[1,2,3])
+
+        @test solve_lp(LP1)==(4,[1,1])
+        @test solve_lp(LP2)==(-1,[-1,-1])
+        @test string(solve_lp(LP3))=="(inf, nothing)"
+
+    end
 
     @testset "(de)homogenize" begin
         dehomogenize, homogenize = OscarPolytope.dehomogenize, OscarPolytope.homogenize
@@ -41,16 +55,16 @@ const pm = OscarPolytope.Polymake
         @test C0 == C0
         @test typeof(dim(Q0)) == Int
         @test typeof(ambient_dim(Q0)) == Int
-        @test vertices(Q0) == vertices(convex_hull(vertices(Q0)))
+        @test collect(vertices(Q0)) == collect(vertices(convex_hull(vertices(Q0; as = :point_matrix))))
     end
 
     @testset "convex_hull" begin
-        @test size(vertices(Q0)) == (3, 2)
-        @test size(vertices(Q1)) == (3, 2)
-        @test size(rays(Q1)) == (1, 2)
+        @test size(vertices(Q0; as = :point_matrix)) == (3, 2)
+        @test size(vertices(Q1; as = :point_matrix)) == (3, 2)
+        @test size(rays(Q1; as = :point_matrix)) == (1, 2)
         @test size(lineality_space(Q1)) == (0, 2)
-        @test size(vertices(Q2)) == (2, 2)
-        @test size(rays(Q2)) == (0, 2)
+        @test size(vertices(Q2; as = :point_matrix)) == (2, 2)
+        @test size(rays(Q2; as = :point_matrix)) == (0, 2)
         @test size(lineality_space(Q2)) == (1, 2)
         @test dim(Q0) == 2
         @test dim(Q1) == 2
@@ -61,8 +75,8 @@ const pm = OscarPolytope.Polymake
     end
 
     @testset "standard constructions" begin
-        @test size(vertices(C0)) == (4, 2)
-        @test_broken C0 == convex_hull(vertices(C0))
+        @test size(vertices(C0; as = :point_matrix)) == (4,2)
+        @test C0 == convex_hull(vertices(C0; as = :point_matrix))
     end
 
     @testset "newton_polytope" begin
@@ -70,16 +84,16 @@ const pm = OscarPolytope.Polymake
         f = sum([x; 1])^2 + x[1]^4 * x[2] * 3
         newt = newton_polytope(f)
         @test dim(newt) == 2
-        @test vertices(newt) == [4 1; 2 0; 0 2; 0 0]
+        @test vertices(newt; as = :point_matrix) == [4 1; 2 0; 0 2; 0 0]
     end
 
     @testset "Construct from fmpq" begin
         A = zeros(Oscar.QQ, 3, 2)
         A[1, 1] = 1
         A[3, 2] = 4
-        @test vertices(convex_hull(A)) == [1 0; 0 0; 0 4]
+        @test vertices(convex_hull(A); as = :point_matrix) == [1 0; 0 0; 0 4]
 
-        lhs, rhs = facets(Polyhedron(A, [1, 2, -3]))
+        lhs, rhs = facets(Polyhedron(A, [1, 2, -3]); as = :halfspace_matrix_pair)
         @test lhs == [1 0; 0 4; 0 0]
         @test rhs == [1, -3, 1]
     end
@@ -88,9 +102,9 @@ const pm = OscarPolytope.Polymake
         A = zeros(Oscar.ZZ, 3, 2)
         A[1, 1] = 1
         A[3, 2] = 4
-        @test vertices(convex_hull(A)) == [1 0; 0 0; 0 4]
+        @test vertices(convex_hull(A); as = :point_matrix) == [1 0; 0 0; 0 4]
 
-        lhs, rhs = facets(Polyhedron(A, [1, 2, -3]))
+        lhs, rhs = facets(Polyhedron(A, [1, 2, -3]); as = :halfspace_matrix_pair)
         @test lhs == [1 0; 0 4; 0 0]
         @test rhs == [1, -3, 1]
     end
