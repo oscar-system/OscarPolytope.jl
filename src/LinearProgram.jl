@@ -76,25 +76,12 @@ end
 feasible_region(lp::LinearProgram) = lp.feasible_region
 
 
+###############################################################################
+###############################################################################
+### Solving of linear programs
+###############################################################################
+###############################################################################
 
-
-"""
-   primal_program(c, A, b)
-
-Constructs the primal linear program max{dot(c,x) | Ax<= b}.
-
-see Def. 4.10
-"""
-primal_program(c, A, b) = LinearProgram(Polyhedron(A,b), c; convention = :max)
-
-# """
-#    DualProgram(c, A, b)
-#
-# Constructs the dual linear program min{yb | yA=c, y>=0}.
-#
-# see Def. 4.10
-# """
-# DualProgram(c, A, b) = LinearProgram(DualPolyhedron(A,c), b)
 
 function minimal_vertex(lp::LinearProgram)
    mv = lp.polymake_lp.MINIMAL_VERTEX
@@ -117,6 +104,14 @@ end
 minimal_value(lp::LinearProgram) = lp.polymake_lp.MINIMAL_VALUE
 maximal_value(lp::LinearProgram) = lp.polymake_lp.MAXIMAL_VALUE
 
+"""
+   solve_lp(lp::LinearProgram)
+
+Gives a pair `(m,v)` where the optimal value `m` of the objective
+ function of lp is attained at `v` (if `m` exists). If the optimum
+ is not attained, `m` may be `inf` or `-inf` in which case `v` is
+ `nothing`. 
+"""
 function solve_lp(lp::LinearProgram)
    if lp.convention == :max
       return(maximal_value(lp),maximal_vertex(lp))
@@ -124,3 +119,29 @@ function solve_lp(lp::LinearProgram)
       return(minimal_value(lp),minimal_vertex(lp))
    end
 end
+
+
+###############################################################################
+###############################################################################
+### Construction of linear programs
+###############################################################################
+###############################################################################
+
+
+"""
+   primal_program(c, A, b)
+
+Constructs the primal linear program max{dot(c,x) | Ax<= b}.
+
+see Def. 4.10
+"""
+primal_program(c, A, b) = LinearProgram(Polyhedron(A,b), c; convention = :max)
+
+# """
+#    DualProgram(c, A, b)
+#
+# Constructs the dual linear program min{yb | yA=c, y>=0}.
+#
+# see Def. 4.10
+# """
+# DualProgram(c, A, b) = LinearProgram(DualPolyhedron(A,c), b)

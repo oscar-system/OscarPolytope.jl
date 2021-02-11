@@ -15,7 +15,7 @@ function Polyhedron(pm_polytope::Polymake.BigObjectAllocated)
 end
 function Polyhedron(A::Union{Oscar.MatElem,AbstractMatrix}, b)
     Polyhedron(Polymake.polytope.Polytope{Rational}(
-        INEQUALITIES = matrix_for_polymake([b -A]),
+        INEQUALITIES = matrix_for_polymake(remove_zero_rows([b -A])),
     ))
 end
 
@@ -180,6 +180,8 @@ n_facets(P::Polyhedron) = pm_polytope(P).N_FACETS
 Returns the facets of the polyhedron `P` in the format defined by `as`.
 The allowed values for `as` are
 * `halfspaces`: Returns for each facet the tuple `(A, b)` describing the halfspace `dot(A,x) ≤ b`.
+* `polyhedra`: Returns for each facet its realization as a polyhedron
+* `halfspace_matrix_pair`: Returns `(A,b)` such `P={x | Ax ≦ b }`
 """
 function facets(P::Polyhedron; as = :halfspaces)
     if as == :halfspaces
@@ -245,7 +247,8 @@ Construct the $[-1,1]$-cube in dimension $d$. If $u$ and $l$ are given, the $[l,
 cube(d, u, l) = Polyhedron(Polymake.polytope.cube(d, u, l))
 
 # TODO: This implementation is not correct. Ask Taylor.
-# Taylor: we should discuss this
+# Taylor: lineality space generators always look like [0, v] so
+#  v is a natural output.
 """
    lineality_space(H::Polyhedron)
 
@@ -303,4 +306,19 @@ Compute the Newton polytope of the given polynomial `poly`.
 function newton_polytope(f)
     exponents = reduce(hcat, Oscar.exponent_vectors(f))'
     convex_hull(exponents)
+end
+
+
+"""
+    support_function(P::Polyhedron; convention = :max)
+
+Produces a function `h(ω) = max{dot(x,ω) | x ∈ P}`. max may be changed
+    to min by setting convention = :min.
+"""
+function support_function(P::Polyhedron; convention = :max)
+    function h(ω::AbstractVector)
+        lp=LinearProgram(P,ω; convention = convention)
+        return(solve_lp(lp)[1])
+    end
+    return(h)
 end

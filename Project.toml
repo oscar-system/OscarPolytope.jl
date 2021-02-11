@@ -1,7 +1,7 @@
 name = "OscarPolytope"
 uuid = "61a3517e-1e29-11e9-1fd3-4d098866440e"
-authors = ["Claus Fieker <fieker@mathematik.uni-kl.de>", "Sebastian Gutsche <gutsche@momo.math.rwth-aachen.de>"]
-version = "0.1.0"
+authors = ["Taylor Brysiewicz <taylor.brysiewicz@mis.mpg.de>","Michael Joswig <joswig@math.tu-berlin.de>","Marek Kaluba <kalmar@amu.edu.pl>","Sascha Timme <sascha.timme@googlemail.com>","Claus Fieker <fieker@mathematik.uni-kl.de>", "Sebastian Gutsche <gutsche@momo.math.rwth-aachen.de>"]
+version = "0.1.1"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"

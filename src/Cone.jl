@@ -58,10 +58,9 @@ of the `generators`. Redundant rays are allowed in the generators.
 """
 function positive_hull(generators::Union{Oscar.MatElem,AbstractMatrix})
     # TODO: Filter out zero rows
-    C=Polymake.polytope.Cone{Rational}(RAYS = matrix_for_polymake(generators))
-    RayIndices=[pm_set_to_julia(S)[1]+1
-                for S in Polymake.polytope.faces_of_dim(C,1)]
-    Cone(generators[RayIndices,:])
+    C=Polymake.polytope.Cone{Rational}(INPUT_RAYS =
+      matrix_for_polymake(remove_zero_rows(generators)))
+    Cone(C)
 end
 
 #Is there a Polymake.jl function for this?

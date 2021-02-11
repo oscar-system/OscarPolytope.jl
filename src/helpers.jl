@@ -3,6 +3,10 @@ matrix_for_polymake(x::Union{Oscar.fmpq_mat,AbstractMatrix{Oscar.fmpq}}) =
     Matrix{Rational{BigInt}}(x)
 matrix_for_polymake(x) = x
 
+function remove_zero_rows(A::Union{Oscar.MatElem,AbstractMatrix})
+    A[findall(x->!iszero(x),collect(eachrow(A))),:]
+end
+
 function augment(vec::AbstractVector, val)
     s = size(vec)
     res = similar(vec, (s[1] + 1,))
